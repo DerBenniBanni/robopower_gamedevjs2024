@@ -129,6 +129,7 @@ class Sprite {
     renderStart(context, layer) {
         context.save();
         context.translate(this.p.x, this.p.y - (layer * 2 || 0));
+        context.scale(1, 0.7);
         if(this.rot != 0) {
             context.rotate(this.rot);
         }
@@ -144,7 +145,7 @@ class Robo extends Sprite {
         super({x,y});
         this.w = 32;
         this.h = 32;
-        this.speed = 50;
+        this.speed = 30;
         this.rotdir = 1;
         this.rotspeed = 90;
     }
@@ -203,6 +204,10 @@ const roboDefinition = {
         [
             [RECTANGLE, 2, 2, 28, 8, 0],
             [RECTANGLE, 2, 22, 28, 8, 0]
+        ],
+        [
+            [RECTANGLE, 0, 2, 32, 8, 0],
+            [RECTANGLE, 0, 22, 32, 8, 0]
         ],
         [
             [RECTANGLE, 0, 2, 32, 8, 0],
