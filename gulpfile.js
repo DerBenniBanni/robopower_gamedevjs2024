@@ -22,7 +22,12 @@ const paths = {
     src: {
         html: 'src/**.html',
         css: 'src/**.css',
-        js: 'src/**.js'
+        js: [
+            'src/a_musicplayer.js',
+            'src/robopower_classes.js',
+            'src/robopower_spritedefinitions.js',
+            'src/robopower_game.js',
+        ]
     },
     dist: {
         dir: 'dist',

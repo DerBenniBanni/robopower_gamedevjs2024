@@ -21,9 +21,13 @@ const sin = Math.sin;
 const cos = Math.cos;
 const toRad = (deg) => deg * (PI / 180);
 const toDeg = (rad) => rad / (PI / 180);
+const rand = (min, max) => Math.random() * (max - min) + min;
+const randInt = (min, max) => Math.round(rand(min, max));
 // shortcuts for canvas fill-/strokeStyle
 const stroke = (context, color) => context.strokeStyle = color;
 const fill = (context, color) => context.fillStyle = color;
+
+
 
 const canvas = document.querySelector('#gameCanvas');
 const ctx = canvas.getContext("2d");
@@ -44,6 +48,7 @@ const getDelta = () => {
 class Game {
     constructor() {
         this.sprites = [];
+        this.bgSprites = [];
         this.state = STATE_LOADING;
     }
 
@@ -72,6 +77,7 @@ class Game {
 
     renderBg() {
         bgCtx.clearRect(0, 0, gameWidth, gameHeight);
+        this.bgSprites.forEach(s=>s.doRender(bgCtx));
     }
     update(delta) {
         this.sprites.forEach(s=>s.update(delta));
@@ -84,6 +90,12 @@ class Game {
     add(sprite) {
         sprite.game = this;
         this.sprites.push(sprite);
+        return sprite;
+    }
+    addBg(sprite) {
+        sprite.game = this;
+        this.bgSprites.push(sprite);
+        return sprite;
     }
 }
 
@@ -110,6 +122,11 @@ class P {
     rotate(angle) {
         return new P(this.x * cos(angle) - this.y * sin(angle), this.x * sin(angle) + this.y * cos(angle));
     }
+    dist(p) {
+        let x = this.x - p.x;
+        let y = this.y - p.y;
+        return Math.sqrt(x*x + y*y);
+    }
 }
 
 class Sprite {
@@ -119,6 +136,7 @@ class Sprite {
         this.colliders = [];
         this.ttl = Infinity;
         this.rot = 0;
+        this.hScale = 1;
     }
     update(delta) {}
     doRender(context) {
@@ -129,7 +147,7 @@ class Sprite {
     renderStart(context, layer) {
         context.save();
         context.translate(this.p.x, this.p.y - (layer * 2 || 0));
-        context.scale(1, 0.7);
+        context.scale(1, this.hScale);
         if(this.rot != 0) {
             context.rotate(this.rot);
         }
@@ -140,24 +158,157 @@ class Sprite {
     }
 }
 
+
+const hexToInt = (h) => parseInt('0x' + h);
+const intToHex = (d) => (d <=15 ? "0" : "") + Number(d).toString(16);
+
+class Color {
+    constructor(h) {
+        h = h[0] == '#' ? h.substr(1) : h;
+        this.r = hexToInt(h.substring(0,2));
+        this.g = hexToInt(h.substring(2,4));
+        this.b = hexToInt(h.substring(4,6));
+        this.a = h.length == 8 ? hexToInt(h.substring(6,8)) : 255;
+    }
+    rgb() {
+        return "#" + intToHex(this.r) + intToHex(this.g) + intToHex(this.b);
+    }
+    rgba() {
+        return "#" + intToHex(this.r) + intToHex(this.g) + intToHex(this.b) + intToHex(this.a);
+    }
+    clone() {
+        return new Color(this.rgba());
+    }
+    randLight(d) {
+        return this.lightness(randInt(-d,d));
+    }
+    lightness(d) {
+        d = Math.round(d);
+        this.r = clamp(this.r + d, 0 , 255);
+        this.g = clamp(this.g + d, 0 , 255);
+        this.b = clamp(this.b + d, 0 , 255);
+        return this;
+    }
+    rand(d) {
+        this.r = clamp(this.r + randInt(-d,d), 0 , 255);
+        this.g = clamp(this.g + randInt(-d,d), 0 , 255);
+        this.b = clamp(this.b + randInt(-d,d), 0 , 255);
+        return this;
+    }
+    fade(a) {
+        a = Math.round(a);
+        this.a = clamp(this.a - a, 0, 255);
+    }
+}
+
+const TASK_FORWARD = 1;
+const TASK_BACKWARD = 2;
+const TASK_TURN_LEFT = 3;
+const TASK_TURN_RIGHT = 4;
+class Task {
+    constructor(task, data) {
+        this.t = task;
+        this.d = data;
+        this.f = false; // finished
+        this.p = null; // targetPoint
+        this.r = null; // targetRotation
+    }
+    setTarget(robo) {
+        let step = scale(40);
+        switch(this.t) {
+            case TASK_FORWARD:
+                this.setMoveTarget(robo, step);
+            break;
+            case TASK_BACKWARD:
+                this.setMoveTarget(robo, -step);
+            break;
+            case TASK_TURN_RIGHT:
+                this.setTurnTarget(robo, PI/2);
+            break;
+            case TASK_TURN_LEFT:
+                this.setTurnTarget(robo, -PI/2);
+            break;
+        }
+    }
+    setMoveTarget(robo, step) {
+        let target = new P(step,0);
+        target = target.rotate(robo.rot);
+        this.p = robo.p.addP(target);
+        this.p.x = Math.round(this.p.x / step) * step;
+        this.p.y = Math.round(this.p.y / step) * step;
+    }
+    setTurnTarget(robo, rotDiff) {
+        this.r = Math.round((robo.rot + rotDiff) / (PI/2)) * (PI/2);
+    }
+    checkTarget(robo) {
+        switch(this.t) {
+            case TASK_FORWARD:
+            case TASK_BACKWARD:
+                if(robo.p.dist(this.p) < 2) {
+                    robo.p.x = this.p.x;
+                    robo.p.y = this.p.y;
+                    this.f = true;
+                    return true;
+                } 
+            break;
+            case TASK_TURN_RIGHT:
+            case TASK_TURN_LEFT:
+                console.log(Math.abs(robo.rot - this.r));
+                if(Math.abs(robo.rot - this.r) < PI/30) {
+                    robo.rot = this.r;
+                    this.f = true;
+                    return true;
+                }
+            break;
+        }
+        return false;
+    }
+}
+
 class Robo extends Sprite {
     constructor({x,y}) {
         super({x,y});
-        this.w = 32;
-        this.h = 32;
-        this.speed = 30;
+        this.w = scale(32);
+        this.h = scale(32);
+        this.speed = 50;
         this.rotdir = 1;
-        this.rotspeed = 90;
+        this.rotspeed = 120;
+        this.hScale = 0.7;
+        this.tasks = [];
+        this.currentTask = null;
     }
     update(delta) {
         super.update(delta);
-        if(Math.abs(this.rot) > PI) {
-            this.rotdir *= -1;
+        if(!this.currentTask && this.tasks.length > 0) {
+            this.currentTask = this.tasks.shift();
+            this.currentTask.setTarget(this);
         }
-        this.rot += toRad(this.rotspeed * delta) * this.rotdir;
-        let move = new P(scale(this.speed * delta),0);
-        move = move.rotate(this.rot);
-        this.p = this.p.addP(move);
+        if(this.currentTask && this.currentTask.f) {
+            this.currentTask = null;
+        }
+        if(!this.currentTask) {
+            return;
+        }
+        let move = null;
+        switch(this.currentTask.t) {
+            case TASK_FORWARD:
+                move = new P(scale(this.speed * delta),0);
+                move = move.rotate(this.rot);
+                this.p = this.p.addP(move);
+            break;
+            case TASK_BACKWARD:
+                move = new P(scale(-this.speed * delta),0);
+                move = move.rotate(this.rot);
+                this.p = this.p.addP(move);
+            break;
+            case TASK_TURN_LEFT:
+                this.rot -= toRad(this.rotspeed * delta);
+            break;
+            case TASK_TURN_RIGHT:
+                this.rot += toRad(this.rotspeed * delta);
+            break;
+        }
+        this.currentTask.checkTarget(this);
     }
     doRender(context) {
         this.render(context);
@@ -172,133 +323,63 @@ class Robo extends Sprite {
             this.renderStart(context, layer);
             data.forEach(d=>{
                 switch(d[0]) {
+                    case CIRCLE:
+                        if(d[4] != undefined) {
+                            fill(context, definition.colors[d[4]]);
+                        }
+                        context.beginPath();
+                        context.arc(scale(d[1]), scale(d[2]), scale(d[3]), 0, 2 * Math.PI, false);
+                        context.fill();
+                    break;
                     case RECTANGLE:
                         if(d[5] != undefined) {
                             fill(context, definition.colors[d[5]]);
                         }
-                        context.fillRect(d[1]-originX, d[2]-originY, d[3], d[4]);
+                        context.fillRect(scale(d[1])-originX, scale(d[2])-originY, scale(d[3]), scale(d[4]));
                     break;
                 }
             })
             this.renderEnd(context);
         });
+        /*
+        this.renderStart(context, 0);
+        fill(context, '#ff0000');
+        context.fillRect(-2,-2,4,4);
+        this.renderEnd(context);
+        if(this.currentTask && this.currentTask.p) {
+            context.save();
+            context.translate(this.currentTask.p.x, this.currentTask.p.y);
+            context.fillRect(-2,-2,4,4);
+            context.restore();
+        }
+        */
     }
 }
 
-const RECTANGLE = 0;
-const roboDefinition = {
-    colors: [
-        '#666666', // 0 track
-        '#aaaaaa', // 1 body
-        '#aaaaff', // 2 screen
-        '#6666ff', // 3 face
-        '#667788', // 4 arms
-        '#999999', // 5 body shade
-    ],
-    layers: [
-        // tracks
-        [
-            [RECTANGLE, 4, 2, 24, 8, 0],
-            [RECTANGLE, 4, 22, 24, 8, 0]
-        ],
-        [
-            [RECTANGLE, 2, 2, 28, 8, 0],
-            [RECTANGLE, 2, 22, 28, 8, 0]
-        ],
-        [
-            [RECTANGLE, 0, 2, 32, 8, 0],
-            [RECTANGLE, 0, 22, 32, 8, 0]
-        ],
-        [
-            [RECTANGLE, 0, 2, 32, 8, 0],
-            [RECTANGLE, 0, 22, 32, 8, 0]
-        ],
-        [
-            [RECTANGLE, 2, 2, 28, 8, 0],
-            [RECTANGLE, 2, 22, 28, 8, 0]
-        ],
-        // body
-        [
-            [RECTANGLE, 1, 1, 30, 30, 1]
-        ],
-        [
-            [RECTANGLE, 0, 0, 32, 32, 5]
-        ],
-        [
-            [RECTANGLE, 0, 0, 32, 32, 1]
-        ],
-        [
-            [RECTANGLE, 0, 0, 32, 32, 1],
-            [RECTANGLE, 30, 1, 2, 30, 2],
-            [RECTANGLE, 10, -5, 28, 4, 4], // left arm
-            [RECTANGLE, 10, 33, 28, 4, 4], // right arm
-        ],
-        [
-            [RECTANGLE, 0, 0, 32, 32, 1],
-            [RECTANGLE, 30, 1, 2, 30, 2],
-            [RECTANGLE, 7, -6, 28, 6, 4], // left arm
-            [RECTANGLE, 7, 32, 28, 6, 4], // right arm
-        ],
-        [
-            [RECTANGLE, 0, 0, 32, 32, 1],
-            [RECTANGLE, 30, 1, 2, 30, 2],
-            [RECTANGLE, 7, -6, 28, 6, 4], // left arm
-            [RECTANGLE, 7, 32, 28, 6, 4], // right arm
-        ],
-        [
-            [RECTANGLE, 0, 0, 32, 32, 1],
-            [RECTANGLE, 30, 1, 2, 30, 2],
-            [RECTANGLE, 30, 5, 2, 5, 3],
-            [RECTANGLE, 30, 22, 2, 5, 3],
-            [RECTANGLE, 10, -5, 28, 4, 4], // left arm
-            [RECTANGLE, 10, 33, 28, 4, 4], // right arm
-        ],
-        [
-            [RECTANGLE, 0, 0, 32, 32, 1],
-            [RECTANGLE, 30, 1, 2, 30, 2],
-            [RECTANGLE, 30, 5, 2, 5, 3],
-            [RECTANGLE, 30, 22, 2, 5, 3], 
-        ],
-        [
-            [RECTANGLE, 0, 0, 32, 32, 1],
-            [RECTANGLE, 30, 1, 2, 30, 2],
-            [RECTANGLE, 30, 5, 2, 5, 3],
-            [RECTANGLE, 30, 22, 2, 5, 3], 
-        ],
-        [
-            [RECTANGLE, 0, 0, 32, 32, 1],
-            [RECTANGLE, 30, 1, 2, 30, 2]
-        ],
-        [
-            [RECTANGLE, 0, 0, 32, 32, 1]
-        ],
-        [
-            [RECTANGLE, 1, 1, 30, 30, 5]
-        ],
-        // Antenna
-        [
-            [RECTANGLE, 15, 15, 2, 2, 0]
-        ],
-        [
-            [RECTANGLE, 14, 15, 2, 2, 0]
-        ],
-        [
-            [RECTANGLE, 13, 15, 2, 2, 0]
-        ],
-        [
-            [RECTANGLE, 12, 15, 2, 2, 0]
-        ],
-        [
-            [RECTANGLE, 11, 15, 2, 2, 0]
-        ],
-        [
-            [RECTANGLE, 10, 15, 2, 2, 0]
-        ],
-        [
-            [RECTANGLE, 8, 13, 6, 6, 1]
-        ],
-        [
-            [RECTANGLE, 7, 13, 6, 6, 1]
-        ],
-    ]
+
+class Floor extends Sprite {
+    constructor({x,y}) {
+        super({x,y});
+        this.w = scale(40);
+        this.h = scale(40);
+        this.c = new Color('777777');
+    }
+    render(context) {
+        let originX = this.w/2;
+        let originY = this.h/2;
+        fill(context, this.c.rgba());
+        context.fillRect(-originX, -originY, this.w, this.h);
+        for(let i = 0; i < 1000; i++) {
+            fill(context, this.c.clone().randLight(10).rgba());
+            let sizeX = randInt(2,5);
+            let sizeY = randInt(2,5);
+            context.fillRect(randInt(-originX, originX-sizeX), randInt(-originY, originY-sizeY), sizeX, sizeY);
+        }
+        fill(context, '#ffffff33');
+        context.fillRect(-originX, -originY, 2, this.h);
+        context.fillRect(-originX + 2, -originY, this.w, 2);
+        fill(context, '#00000033');
+        context.fillRect(originX-2, -originY, 2, this.h);
+        context.fillRect(-originX, originY-2, this.w, 2);
+    } 
 }
