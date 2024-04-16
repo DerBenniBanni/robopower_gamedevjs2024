@@ -4,7 +4,7 @@ const STATE_GAME_RUNNING = 3;
 const STATE_GAME_FINISHED = 4;
 
 const BASEWIDTH = 1920;
-const BASEHEIGHT = 1080;
+const BASEHEIGHT = 911;
 
 const setDim = (element, width, height) =>{
     element.width = width; 
@@ -44,6 +44,47 @@ const getDelta = () => {
     return delta;
 }
 
+class SpriteBuffer {
+    constructor(w, h) {
+        this.c = document.createElement("canvas");
+        this.c.width = w;
+        this.c.height = h;
+        this.ctx = this.c.getContext('2d');
+        this.colCircles = [];
+    }
+}
+const getSpriteBuffer = (w,h) =>  new SpriteBuffer(scaleI(w),scaleI(h));
+const translateContext = (context, x, y) => context.translate(scaleI(x),scale(y));
+
+class ImagePool {
+    constructor() {
+        this.p = [];
+        this.c = -1;
+    }
+    // add at the end
+    a(i) {
+        this.p.push(i);
+    }
+    // overwrite at index
+    i(idx, i) {
+        this.p[idx] = i;
+    }
+    // get image at index 
+    g(idx) {
+        if(idx !== undefined) {
+            return this.p[idx];
+        }
+        this.c++;
+        if(this.c >= this.p.length) {
+            this.c = 0;
+        }
+        return this.p[this.c];
+    }
+    // get length of image-pool
+    l() {
+        return this.p.length;
+    }
+}
 
 class Game {
     constructor() {
@@ -88,7 +129,7 @@ class Game {
         this.sprites.forEach(s=>s.doRender(ctx));
         if(this.crt) {
             ctx.beginPath();
-            stroke(ctx,'#000000' + randInt(50,50));
+            stroke(ctx,'#000000' + randInt(70,70));
             for(let y = 1; y < scale(BASEHEIGHT); y += 3) {
                 ctx.moveTo(0,y);
                 ctx.lineTo(scale(BASEWIDTH), y);
@@ -138,38 +179,6 @@ class P {
         return Math.sqrt(x*x + y*y);
     }
 }
-
-class Sprite {
-    constructor({x,y}) {
-        this.p = new P(scale(x), scale(y));
-        this.game = null;
-        this.colliders = [];
-        this.ttl = Infinity;
-        this.rot = 0;
-        this.hScale = 1;
-    }
-    update(delta) {}
-    doRender(context) {
-        this.renderStart(context);
-        this.render(context);
-        this.renderEnd(context);
-    }
-    renderStart(context, layer) {
-        context.save();
-        let y = layer ? this.p.y - layer * scale(2) : this.p.y;
-        context.translate(this.p.x, y);
-        context.scale(1, this.hScale);
-        if(this.rot != 0) {
-            context.rotate(this.rot);
-        }
-    }
-    render(context) {}
-    renderEnd(context) {
-        context.restore();
-    }
-}
-
-
 const hexToInt = (h) => parseInt('0x' + h);
 const intToHex = (d) => (d <=15 ? "0" : "") + Number(d).toString(16);
 
@@ -212,74 +221,39 @@ class Color {
     }
 }
 
-const TASK_FORWARD = 1;
-const TASK_BACKWARD = 2;
-const TASK_TURN_LEFT = 3;
-const TASK_TURN_RIGHT = 4;
-class Task {
-    constructor(task, data) {
-        this.t = task;
-        this.d = data;
-        this.f = false; // finished
-        this.p = null; // targetPoint
-        this.r = null; // targetRotation
+class Sprite {
+    constructor({x,y}) {
+        this.p = new P(scale(x), scale(y));
+        this.game = null;
+        this.colliders = [];
+        this.ttl = Infinity;
+        this.rot = 0;
+        this.hScale = 1;
     }
-    setTarget(robo) {
-        let step = scale(40);
-        switch(this.t) {
-            case TASK_FORWARD:
-                this.setMoveTarget(robo, step);
-            break;
-            case TASK_BACKWARD:
-                this.setMoveTarget(robo, -step);
-            break;
-            case TASK_TURN_RIGHT:
-                this.setTurnTarget(robo, PI/2);
-            break;
-            case TASK_TURN_LEFT:
-                this.setTurnTarget(robo, -PI/2);
-            break;
-        }
+    update(delta) {}
+    doRender(context) {
+        this.renderStart(context);
+        this.render(context);
+        this.renderEnd(context);
     }
-    setMoveTarget(robo, step) {
-        let target = new P(step,0);
-        target = target.rotate(robo.rot);
-        this.p = robo.p.addP(target);
-        this.p.x = Math.round(this.p.x / step) * step;
-        this.p.y = Math.round(this.p.y / step) * step;
+    renderStart(context, layer) {
+        context.save();
+        context.translate(this.p.x, this.p.y);
     }
-    setTurnTarget(robo, rotDiff) {
-        this.r = Math.round((robo.rot + rotDiff) / (PI/2)) * (PI/2);
-    }
-    checkTarget(robo) {
-        switch(this.t) {
-            case TASK_FORWARD:
-            case TASK_BACKWARD:
-                if(robo.p.dist(this.p) < 2) {
-                    robo.p.x = this.p.x;
-                    robo.p.y = this.p.y;
-                    this.f = true;
-                    return true;
-                } 
-            break;
-            case TASK_TURN_RIGHT:
-            case TASK_TURN_LEFT:
-                if(Math.abs(robo.rot - this.r) < PI/30) {
-                    robo.rot = this.r;
-                    this.f = true;
-                    return true;
-                }
-            break;
-        }
-        return false;
+    render(context) {}
+    renderEnd(context) {
+        context.restore();
     }
 }
+
+
+
 
 class Robo extends Sprite {
     constructor({x,y}) {
         super({x,y});
-        this.w = scale(32);
-        this.h = scale(32);
+        //this.w = scale(32);
+        //this.h = scale(32);
         this.speed = 50;
         this.rotdir = 1;
         this.rotspeed = 120;
@@ -320,53 +294,76 @@ class Robo extends Sprite {
         }
         this.currentTask.checkTarget(this);
     }
-    doRender(context) {
-        this.render(context);
-    }
     render(context) {
-        fill(context, '#ffffff');
-        let originX = this.w/2;
-        let originY = this.h/2;
-        
-        let definition = roboDefinition;
-        definition.layers.forEach((data,layer) => {
-            this.renderStart(context, layer);
-            data.forEach(d=>{
-                switch(d[0]) {
-                    case CIRCLE:
-                        if(d[4] != undefined) {
-                            fill(context, definition.colors[d[4]]);
-                        }
-                        context.beginPath();
-                        context.arc(scale(d[1]), scale(d[2]), scale(d[3]), 0, 2 * Math.PI, false);
-                        context.fill();
-                    break;
-                    case RECTANGLE:
-                        if(d[5] != undefined) {
-                            fill(context, definition.colors[d[5]]);
-                        }
-                        context.fillRect(scale(d[1])-originX, scale(d[2])-originY, scale(d[3]), scale(d[4]));
-                    break;
-                }
-            })
-            this.renderEnd(context);
-        });
-        /*
-        this.renderStart(context, 0);
-        fill(context, '#ff0000');
-        context.fillRect(-2,-2,4,4);
-        this.renderEnd(context);
-        if(this.currentTask && this.currentTask.p) {
-            context.save();
-            context.translate(this.currentTask.p.x, this.currentTask.p.y);
-            context.fillRect(-2,-2,4,4);
-            context.restore();
-        }
-        */
+        let rotDeg = Math.floor(toDeg(this.rot) % 360);
+        context.drawImage(roboImagePool.g(rotDeg).c,scale(-roboDefinition.origin.x),scale(-roboDefinition.origin.y));
+
     }
 }
 
 
+const TASK_FORWARD = 1;
+const TASK_BACKWARD = 2;
+const TASK_TURN_LEFT = 3;
+const TASK_TURN_RIGHT = 4;
+class Task {
+    constructor(task, data) {
+        this.t = task;
+        this.d = data;
+        this.f = false; // finished
+        this.p = null; // targetPoint
+        this.r = null; // targetRotation
+    }
+    setTarget(robo) {
+        let step = scale(40);
+        switch(this.t) {
+            case TASK_FORWARD:
+                this.setMoveTarget(robo, step);
+            break;
+            case TASK_BACKWARD:
+                this.setMoveTarget(robo, -step);
+            break;
+            case TASK_TURN_RIGHT:
+                this.setTurnTarget(robo, PI/2);
+            break;
+            case TASK_TURN_LEFT:
+                this.setTurnTarget(robo, -PI/2);
+            break;
+        }
+    }
+    setMoveTarget(robo, step) {
+        let target = new P(step,0);
+        target = target.rotate(robo.rot);
+        this.p = robo.p.addP(target);
+        this.p.x = Math.round(this.p.x / step) * step - step/2;
+        this.p.y = Math.round(this.p.y / step) * step - step/2;
+    }
+    setTurnTarget(robo, rotDiff) {
+        this.r = Math.round((robo.rot + rotDiff) / (PI/2)) * (PI/2);
+    }
+    checkTarget(robo) {
+        switch(this.t) {
+            case TASK_FORWARD:
+            case TASK_BACKWARD:
+                if(robo.p.dist(this.p) < 2) {
+                    robo.p.x = this.p.x;
+                    robo.p.y = this.p.y;
+                    this.f = true;
+                    return true;
+                } 
+            break;
+            case TASK_TURN_RIGHT:
+            case TASK_TURN_LEFT:
+                if(Math.abs(robo.rot - this.r) < PI/30) {
+                    robo.rot = this.r;
+                    this.f = true;
+                    return true;
+                }
+            break;
+        }
+        return false;
+    }
+}
 class Floor extends Sprite {
     constructor({x,y}) {
         super({x,y});

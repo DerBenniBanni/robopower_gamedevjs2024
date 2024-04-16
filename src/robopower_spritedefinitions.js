@@ -1,6 +1,10 @@
 const RECTANGLE = 0;
 const CIRCLE = 1;
 const roboDefinition = {
+    w:64,
+    h:80,
+    origin:{x:32, y:65},
+    originLayers:{x:16, y:16},
     colors: [
         '#666666', // 0 track
         '#aaaaaa', // 1 body
