@@ -50,6 +50,7 @@ class Game {
         this.sprites = [];
         this.bgSprites = [];
         this.state = STATE_LOADING;
+        this.crt = false; // CRT-Effect
     }
 
     run() {
@@ -85,6 +86,15 @@ class Game {
     render() {
         ctx.clearRect(0, 0, gameWidth, gameHeight);
         this.sprites.forEach(s=>s.doRender(ctx));
+        if(this.crt) {
+            ctx.beginPath();
+            stroke(ctx,'#000000' + randInt(50,50));
+            for(let y = 1; y < scale(BASEHEIGHT); y += 3) {
+                ctx.moveTo(0,y);
+                ctx.lineTo(scale(BASEWIDTH), y);
+            }
+            ctx.stroke();
+        }
     }
 
     add(sprite) {
@@ -146,7 +156,8 @@ class Sprite {
     }
     renderStart(context, layer) {
         context.save();
-        context.translate(this.p.x, this.p.y - (layer * 2 || 0));
+        let y = layer ? this.p.y - layer * scale(2) : this.p.y;
+        context.translate(this.p.x, y);
         context.scale(1, this.hScale);
         if(this.rot != 0) {
             context.rotate(this.rot);
@@ -253,7 +264,6 @@ class Task {
             break;
             case TASK_TURN_RIGHT:
             case TASK_TURN_LEFT:
-                console.log(Math.abs(robo.rot - this.r));
                 if(Math.abs(robo.rot - this.r) < PI/30) {
                     robo.rot = this.r;
                     this.f = true;
