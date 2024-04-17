@@ -15,32 +15,63 @@ canvas {
 }
 #program {
 	position:absolute;
-	top:10px;
-	right: 0px; 
-	width: 100px;
-	color:#fff;
+	bottom:10px;
+	left: 10px;
+	display:flex;
+	flex-direction: row;
+}
+.task {
 	white-space: nowrap;
+	padding:10px;
+	margin:2px;
+	border-radius: 8px;
+	border: 3px solid;
+	border-color: #fff5 #0005 #0005 #fff5;
 }
 .metal {
 	outline: none;
-	
-	font: bold 2em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
-	text-align: center;
-	color: hsla(0,0%,20%,1);
-	text-shadow: hsla(0,0%,40%,.5) 0 -1px 0, hsla(0,0%,100%,.6) 0 2px 1px;
-	
+	color: #333;
+	text-shadow: #6668 -1px -1px 1px, #fff9 0 2px 1px;
 	background-color: hsl(0,0%,90%);
-	-box-shadow: inset hsla(0,0%,15%,  1) 0  0px 0px 4px, /* border */
-	  inset hsla(0,0%,15%, .8) 0 -1px 5px 4px, /* soft SD */
-	  inset hsla(0,0%,0%, .25) 0 -1px 0px 7px, /* bottom SD */
-	  inset hsla(0,0%,100%,.7) 0  2px 1px 7px, /* top HL */
-	  
-	  hsla(0,0%, 0%,.15) 0 -5px 6px 4px, /* outer SD */
-	  hsla(0,0%,100%,.5) 0  5px 6px 4px; /* outer HL */ 
-	background-image: 
-	  linear-gradient(180deg, hsl(0,0%,78%)  0%, 
-	  hsl(0,0%,90%) 47%, 
-	  hsl(0,0%,78%) 53%,
-	  hsl(0,0%,70%)100%);
+	background-image: repeating-linear-gradient(90deg, #aaa5 0%, #ccc5 1%, #bbb5 1.5%),
+		repeating-linear-gradient(80deg, #aaa5 0%, #ccc5 5%, #bbb5 7%),
+		linear-gradient(180deg, hsl(0,0%,78%)  0%, #eee 47%,#ccc 53%,#bbb 100%);
+
+}
+.btn {
 	transition: color .2s;
-  }
+	font: bold 1rem sans-serif;
+	text-align: center;
+	vertical-align: middle;
+	border-radius: 0.3rem;
+	width:3rem;
+	height:2.5rem;
+	margin:4px;
+	box-shadow:
+		-2px -2px 2px #0003,
+		2px 2px 2px #fff8;
+	cursor: pointer;
+}
+.btn:not(.active):hover {
+	color:var(--s);
+}
+.large {
+	width:6rem;
+}
+.red {
+	--c:#f00;
+	--s:#f008;
+}
+.green {
+	--c:#0a0;
+	--s:#0a08;
+}
+.blue {
+	--c:#33f;
+	--s:#33f8;
+}
+.active {
+	color:var(--c);
+	border-color:var(--c);
+	text-shadow: var(--s) 0 0 5px,#6668 -1px -1px 1px, #fff9 0 2px 1px;
+}

@@ -126,6 +126,7 @@ class Game {
     }
     render() {
         ctx.clearRect(0, 0, gameWidth, gameHeight);
+        this.sprites.sort((s1, s2) => (s1.p.y) - (s2.p.y));
         this.sprites.forEach(s=>s.doRender(ctx));
         if(this.crt) {
             ctx.beginPath();
@@ -254,9 +255,9 @@ class Robo extends Sprite {
         super({x,y});
         //this.w = scale(32);
         //this.h = scale(32);
-        this.speed = 50;
+        this.speed = 80;
         this.rotdir = 1;
-        this.rotspeed = 120;
+        this.rotspeed = 180;
         this.hScale = 0.7;
         this.tasks = [];
         this.currentTask = null;
@@ -306,6 +307,8 @@ const TASK_FORWARD = 1;
 const TASK_BACKWARD = 2;
 const TASK_TURN_LEFT = 3;
 const TASK_TURN_RIGHT = 4;
+const TASK_POWERDOWN = 5;
+const TASK_EXTRAPOWER = 6;
 class Task {
     constructor(task, data) {
         this.t = task;

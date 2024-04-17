@@ -61,3 +61,22 @@ for(let x = 20; x < 600; x+=40) {
 }
 
 game.renderBg();
+
+[...document.querySelectorAll('.btn')].forEach(btn => {
+    btn.addEventListener('click',(ev)=>{
+        let target = ev.target;
+        let classList = target.classList;
+        if(classList.contains('execute')) {
+            [...document.querySelectorAll('.task')].forEach(task => {
+                let action = task.querySelector('.btn.active');
+                if(action) {
+                    robo1.tasks.push(new Task(action.getAttribute('t')*1));
+                }
+            });
+        } else if(classList.contains('reset')) {
+
+        } else {
+            ev.target.classList.toggle('active');
+        }
+    })
+});
