@@ -48,17 +48,23 @@ for(let rotDeg = 0; rotDeg < 360; rotDeg++) {
 
 game.run();
 
-let robo1 = game.add(new Robo({x:180, y:180}));
+let robo1 = game.add(new Robo({x:380, y:380}));
 [TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,TASK_TURN_LEFT,TASK_BACKWARD,TASK_BACKWARD,TASK_TURN_RIGHT].forEach(t => robo1.tasks.push(new Task(t)));
 
-let robo2 = game.add(new Robo({x:260, y:220}));
+let robo2 = game.add(new Robo({x:460, y:500}));
 [TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,TASK_TURN_LEFT,TASK_TURN_LEFT,TASK_FORWARD,TASK_TURN_RIGHT,TASK_BACKWARD].forEach(t => robo2.tasks.push(new Task(t)));
 
-for(let x = 20; x < 600; x+=40) {
-    for(let y = 20; y < 600; y+=40) {
+for(let x = 220; x < 900; x+=40) {
+    for(let y = 220; y < 800; y+=40) {
         game.addBg(new Floor({x,y}));
     }
 }
+
+game.add(new Belt({x:380, y:660, d:BELT_UP}));
+game.add(new Belt({x:380, y:620, d:BELT_UP, t:BELT_TURN_RIGHT}));
+game.add(new Belt({x:420, y:620, d:BELT_RIGHT}));
+game.add(new Belt({x:460, y:620, d:BELT_RIGHT, t:BELT_TURN_LEFT}));
+game.add(new Belt({x:460, y:580, d:BELT_UP}));
 
 game.renderBg();
 

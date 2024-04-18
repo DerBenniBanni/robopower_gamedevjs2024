@@ -12,7 +12,7 @@ const roboDefinition = {
         '#66f', // 3 face
         '#678', // 4 arms
         '#999', // 5 body shade
-        '#0006', // 6 shadow
+        '#0001', // 6 shadow
         '#333', // 7 track outside
     ],
     layers: [
