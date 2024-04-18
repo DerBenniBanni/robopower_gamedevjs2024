@@ -6,13 +6,14 @@ const roboDefinition = {
     origin:{x:32, y:65},
     originLayers:{x:16, y:16},
     colors: [
-        '#666666', // 0 track
-        '#aaaaaa', // 1 body
-        '#aaaaff', // 2 screen
-        '#6666ff', // 3 face
-        '#667788', // 4 arms
-        '#999999', // 5 body shade
-        '#00000022', // 6 shadow
+        '#777', // 0 track
+        '#aaa', // 1 body
+        '#aaf', // 2 screen
+        '#66f', // 3 face
+        '#678', // 4 arms
+        '#999', // 5 body shade
+        '#0006', // 6 shadow
+        '#333', // 7 track outside
     ],
     layers: [
         // tracks
@@ -24,16 +25,22 @@ const roboDefinition = {
             [RECTANGLE, 4, 22, 24, 8, 0]
         ],
         [
-            [RECTANGLE, 2, 2, 28, 8, 0],
-            [RECTANGLE, 2, 22, 28, 8, 0]
+            [RECTANGLE, 2, 2, 28, 8, 7],
+            [RECTANGLE, 3, 2, 26, 8, 0],
+            [RECTANGLE, 2, 22, 28, 8, 7],
+            [RECTANGLE, 3, 22, 26, 8, 0]
         ],
         [
-            [RECTANGLE, 0, 2, 32, 8, 0],
-            [RECTANGLE, 0, 22, 32, 8, 0]
+            [RECTANGLE, 0, 2, 32, 8, 7],
+            [RECTANGLE, 1, 2, 30, 8, 0],
+            [RECTANGLE, 0, 22, 32, 8, 7],
+            [RECTANGLE, 1, 22, 30, 8, 0]
         ],
         [
-            [RECTANGLE, 0, 2, 32, 8, 0],
-            [RECTANGLE, 0, 22, 32, 8, 0]
+            [RECTANGLE, 0, 2, 32, 8, 7],
+            [RECTANGLE, 1, 2, 30, 8, 0],
+            [RECTANGLE, 0, 22, 32, 8, 7],
+            [RECTANGLE, 1, 22, 30, 8, 0]
         ],
         [
             [RECTANGLE, 2, 2, 28, 8, 0],
