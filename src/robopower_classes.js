@@ -288,9 +288,15 @@ class Robo extends Sprite {
             break;
             case TASK_TURN_LEFT:
                 this.rot -= toRad(this.rotspeed * delta);
+                if(this.rot < 0) {
+                    this.rot += PI*2
+                }
             break;
             case TASK_TURN_RIGHT:
                 this.rot += toRad(this.rotspeed * delta);
+                if(this.rot > PI*2) {
+                    this.rot -= PI*2
+                }
             break;
         }
         this.currentTask.checkTarget(this);
@@ -343,6 +349,12 @@ class Task {
     }
     setTurnTarget(robo, rotDiff) {
         this.r = Math.round((robo.rot + rotDiff) / (PI/2)) * (PI/2);
+        if(this.r < 0) {
+            this.r += PI * 2;
+        }
+        if(this.r > PI * 2) {
+            this.r -= PI * 2;
+        }
     }
     checkTarget(robo) {
         switch(this.t) {

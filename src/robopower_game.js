@@ -62,21 +62,35 @@ for(let x = 20; x < 600; x+=40) {
 
 game.renderBg();
 
+const getButtonAction = button => button.getAttribute('t')*1;
+
 [...document.querySelectorAll('.btn')].forEach(btn => {
     btn.addEventListener('click',(ev)=>{
         let target = ev.target;
         let classList = target.classList;
         if(classList.contains('execute')) {
             [...document.querySelectorAll('.task')].forEach(task => {
-                let action = task.querySelector('.btn.active');
-                if(action) {
-                    robo1.tasks.push(new Task(action.getAttribute('t')*1));
+                let button = task.querySelector('.btn.active');
+                if(button) {
+                    robo1.tasks.push(new Task(getButtonAction(button)));
                 }
             });
         } else if(classList.contains('reset')) {
 
         } else {
-            ev.target.classList.toggle('active');
+            let button = ev.target;
+            let task = button.closest('.task');
+            let action = getButtonAction(button);
+            if(!button.classList.contains('active')) {
+                if([TASK_FORWARD, TASK_BACKWARD, TASK_TURN_LEFT, TASK_TURN_RIGHT].indexOf(action) > -1) {
+                    [...task.querySelectorAll('.btn.active.move, .btn.active.powerdown')].forEach(b => b.classList.remove('active'));
+                } else if(TASK_POWERDOWN == action) {
+                    [...task.querySelectorAll('.btn.active.move, .btn.active.boost')].forEach(b => b.classList.remove('active'));
+                } else if(TASK_EXTRAPOWER == action) {
+                    [...task.querySelectorAll('.btn.active.powerdown')].forEach(b => b.classList.remove('active'));
+                }
+            }
+            button.classList.toggle('active');
         }
     })
 });

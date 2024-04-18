@@ -58,15 +58,15 @@ canvas {
 .large {
 	width:6rem;
 }
-.red {
+.powerdown {
 	--c:#f00;
 	--s:#f008;
 }
-.green {
+.boost {
 	--c:#0a0;
 	--s:#0a08;
 }
-.blue {
+.move {
 	--c:#33f;
 	--s:#33f8;
 }
@@ -74,4 +74,8 @@ canvas {
 	color:var(--c);
 	border-color:var(--c);
 	text-shadow: var(--s) 0 0 5px,#6668 -1px -1px 1px, #fff9 0 2px 1px;
+	box-shadow:
+		-2px -2px 2px #0003,
+		2px 2px 2px #fff8,
+		inset 2px 2px 3px -1px #0008;
 }
