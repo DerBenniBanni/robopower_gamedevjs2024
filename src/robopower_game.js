@@ -34,18 +34,19 @@ const loadMusic = (song, audioname, loop) => {
 }
 loadMusic(song, 'gameAudio', true);
 
-const createStackedSprite = function(stackedSpriteDefinition) {
+const createStackedSprite = function(stackedSpriteDefinition, stepsDegree) {
+    stepsDegree = stepsDegree || 1;
     let imagePool = new ImagePool();
     let p = new P(scale(stackedSpriteDefinition.origin.x), scale(stackedSpriteDefinition.origin.y));
     let hScaleRobo = 0.7;
-    for(let rotDeg = 0; rotDeg < 360; rotDeg++) {
+    for(let rotDeg = 0; rotDeg < 360; rotDeg += stepsDegree) {
         let rot = toRad(rotDeg);
         let spritebuffer = getSpriteBuffer(scale(stackedSpriteDefinition.w), scale(stackedSpriteDefinition.h));
         let context = spritebuffer.ctx;
         fill(context, '#ffffff');
         
         stackedSpriteDefinition.layers.forEach((data,layer) => {
-            let y0 = layer ? p.y - layer * scale(2) : p.y;
+            let y0 = layer ? p.y - scale(layer * 2) : p.y;
             let y1 = y0-scale(1);
             [y0,y1].forEach(y => {
                 //translate context
@@ -85,6 +86,9 @@ const createStackedSprite = function(stackedSpriteDefinition) {
 
 const roboImagePool = createStackedSprite(roboDefinition);
 const robo2ImagePool = createStackedSprite(robo2Definition);
+const robo3ImagePool = createStackedSprite(robo3Definition);
+const lazerTowerImagePool = createStackedSprite(lazerTowerDefinition, 90);
+const lazerImagePool = createStackedSprite(lazerDefinition, 90);
 
 game.run();
 
@@ -110,6 +114,18 @@ let robo2 = game.add(new Robo({x:460, y:380,imagePool:robo2ImagePool, spriteDef:
     TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
 ].forEach(t => robo2.tasks.push(new Task(t)));
 
+
+let robo3 = game.add(new Robo({x:340, y:460,imagePool:robo3ImagePool, spriteDef:robo3Definition}));
+[
+    TASK_TURN_LEFT,TASK_FORWARD,TASK_FORWARD,
+    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
+    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
+    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
+    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
+    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
+    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
+].forEach(t => robo3.tasks.push(new Task(t)));
+
 for(let x = 220; x < 900; x+=40) {
     for(let y = 220; y < 800; y+=40) {
         game.addBg(new Floor({x,y}));
@@ -121,6 +137,12 @@ game.add(new Belt({x:380, y:620, d:BELT_UP, t:BELT_TURN_RIGHT}));
 game.add(new Belt({x:420, y:620, d:BELT_RIGHT}));
 game.add(new Belt({x:460, y:620, d:BELT_RIGHT, t:BELT_TURN_LEFT}));
 game.add(new Belt({x:460, y:580, d:BELT_UP}));
+
+game.add(new LazerTower({x:580,y:580,d:BELT_RIGHT, imagePool:lazerTowerImagePool, spriteDef:lazerTowerDefinition}));
+game.add(new Lazer({x:620,y:580,d:BELT_RIGHT, imagePool:lazerImagePool, spriteDef:lazerDefinition}));
+
+game.add(new LazerTower({x:580,y:380,d:BELT_DOWN, imagePool:lazerTowerImagePool, spriteDef:lazerTowerDefinition}));
+game.add(new Lazer({x:580,y:420,d:BELT_DOWN, imagePool:lazerImagePool, spriteDef:lazerDefinition}));
 
 game.renderBg();
 

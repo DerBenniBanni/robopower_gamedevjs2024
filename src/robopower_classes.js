@@ -310,7 +310,6 @@ class Robo extends Sprite {
     render(context) {
         let rotDeg = Math.floor(toDeg(this.rot) % 360);
         context.drawImage(this.imagePool.g(rotDeg).c,scale(-this.spriteDef.origin.x),scale(-this.spriteDef.origin.y));
-
     }
 }
 
@@ -412,6 +411,37 @@ class Floor extends Sprite {
     } 
 }
 
+class LazerTower extends Sprite {
+    constructor({x,y,d, imagePool, spriteDef}) {
+        super({x,y});
+        this.w = scale(40);
+        this.h = scale(40);
+        this.d = d; // direction
+        this.imagePool = imagePool;
+        this.spriteDef = spriteDef;
+        this.sortMod = scale(41);
+    }
+    render(context) {
+        let rotDeg = Math.floor(toDeg(this.d) % 360);
+        context.drawImage(this.imagePool.g(rotDeg).c,scale(-this.spriteDef.origin.x),scale(-this.spriteDef.origin.y));
+    }
+}
+class Lazer extends Sprite {
+    constructor({x,y,d, imagePool, spriteDef}) {
+        super({x,y});
+        this.w = scale(40);
+        this.h = scale(40);
+        this.d = d; // direction
+        this.imagePool = imagePool;
+        this.spriteDef = spriteDef;
+        this.sortMod = scale(45);
+    }
+    render(context) {
+        let rotDeg = Math.floor(toDeg(this.d) % 360);
+        context.drawImage(this.imagePool.g(rotDeg).c,scale(-this.spriteDef.origin.x),scale(-this.spriteDef.origin.y));
+    }
+}
+
 const BELT_RIGHT = 0;
 const BELT_UP = PI*1.5;
 const BELT_LEFT = PI;
@@ -422,11 +452,11 @@ const BELT_TURN_LEFT = 2;
 const BELT_TURN_RIGHT = 3;
 
 class Belt extends Sprite {
-    constructor({x,y,d,t}) {
+    constructor({x, y, d, t}) {
         super({x,y});
         this.w = scale(40);
         this.h = scale(40);
-        this.d = d ; // direction
+        this.d = d; // direction
         this.t = t || BELT_STRAIGHT; // type
     }
     renderStartExt(context) {
