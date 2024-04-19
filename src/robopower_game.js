@@ -34,57 +34,81 @@ const loadMusic = (song, audioname, loop) => {
 }
 loadMusic(song, 'gameAudio', true);
 
-const roboImagePool = new ImagePool();
-let p = new P(scale(roboDefinition.origin.x), scale(roboDefinition.origin.y));
-let hScaleRobo = 0.7;
-for(let rotDeg = 0; rotDeg < 360; rotDeg++) {
-    let rot = toRad(rotDeg);
-    let spritebuffer = getSpriteBuffer(scale(roboDefinition.w), scale(roboDefinition.h));
-    let context = spritebuffer.ctx;
-    fill(context, '#ffffff');
-    
-    roboDefinition.layers.forEach((data,layer) => {
-
-        //translate context
-        context.save();
-        let y = layer ? p.y - layer * scale(2) : p.y;
-        translateContext(context, p.x, y);
-        context.scale(1, hScaleRobo);
-        if(rot != 0) {
-            context.rotate(rot);
-        }
-        // render data
-        data.forEach(d=>{
-            switch(d[0]) {
-                case CIRCLE:
-                    if(d[4] != undefined) {
-                        fill(context, roboDefinition.colors[d[4]]);
+const createStackedSprite = function(stackedSpriteDefinition) {
+    let imagePool = new ImagePool();
+    let p = new P(scale(stackedSpriteDefinition.origin.x), scale(stackedSpriteDefinition.origin.y));
+    let hScaleRobo = 0.7;
+    for(let rotDeg = 0; rotDeg < 360; rotDeg++) {
+        let rot = toRad(rotDeg);
+        let spritebuffer = getSpriteBuffer(scale(stackedSpriteDefinition.w), scale(stackedSpriteDefinition.h));
+        let context = spritebuffer.ctx;
+        fill(context, '#ffffff');
+        
+        stackedSpriteDefinition.layers.forEach((data,layer) => {
+            let y0 = layer ? p.y - layer * scale(2) : p.y;
+            let y1 = y0-scale(1);
+            [y0,y1].forEach(y => {
+                //translate context
+                context.save();
+                translateContext(context, p.x, y);
+                context.scale(1, hScaleRobo);
+                if(rot != 0) {
+                    context.rotate(rot);
+                }
+                // render data
+                data.forEach(d=>{
+                    switch(d[0]) {
+                        case CIRCLE:
+                            if(d[4] != undefined) {
+                                fill(context, stackedSpriteDefinition.colors[d[4]]);
+                            }
+                            context.beginPath();
+                            context.arc(scale(d[1]), scale(d[2]), scale(d[3]), 0, 2 * Math.PI, false);
+                            context.fill();
+                        break;
+                        case RECTANGLE:
+                            if(d[5] != undefined) {
+                                fill(context, stackedSpriteDefinition.colors[d[5]]);
+                            }
+                            context.fillRect(scale(d[1] - stackedSpriteDefinition.originLayers.x), scale(d[2]-stackedSpriteDefinition.originLayers.y), scale(d[3]), scale(d[4]));
+                        break;
                     }
-                    context.beginPath();
-                    context.arc(scale(d[1]), scale(d[2]), scale(d[3]), 0, 2 * Math.PI, false);
-                    context.fill();
-                break;
-                case RECTANGLE:
-                    if(d[5] != undefined) {
-                        fill(context, roboDefinition.colors[d[5]]);
-                    }
-                    context.fillRect(scale(d[1] - roboDefinition.originLayers.x), scale(d[2]-roboDefinition.originLayers.y), scale(d[3]), scale(d[4]));
-                break;
-            }
-        })
-        context.restore();
-    });
-    roboImagePool.i(rotDeg, spritebuffer);
+                })
+                context.restore();
+            });
+        });
+        imagePool.i(rotDeg, spritebuffer);
+    }
+    return imagePool;
 }
 
 
+const roboImagePool = createStackedSprite(roboDefinition);
+const robo2ImagePool = createStackedSprite(robo2Definition);
+
 game.run();
 
-let robo1 = game.add(new Robo({x:380, y:380}));
-[TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,TASK_TURN_LEFT,TASK_BACKWARD,TASK_BACKWARD,TASK_TURN_RIGHT].forEach(t => robo1.tasks.push(new Task(t)));
+let robo1 = game.add(new Robo({x:340, y:380,imagePool:roboImagePool, spriteDef:roboDefinition}));
+[
+    TASK_FORWARD,TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,
+    TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,
+    TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,
+    TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,
+    TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,
+    TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,
+    TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,
+].forEach(t => robo1.tasks.push(new Task(t)));
 
-let robo2 = game.add(new Robo({x:460, y:500}));
-[TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,TASK_TURN_LEFT,TASK_TURN_LEFT,TASK_FORWARD,TASK_TURN_RIGHT,TASK_BACKWARD].forEach(t => robo2.tasks.push(new Task(t)));
+let robo2 = game.add(new Robo({x:460, y:380,imagePool:robo2ImagePool, spriteDef:robo2Definition}));
+[
+    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
+    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
+    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
+    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
+    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
+    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
+    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
+].forEach(t => robo2.tasks.push(new Task(t)));
 
 for(let x = 220; x < 900; x+=40) {
     for(let y = 220; y < 800; y+=40) {

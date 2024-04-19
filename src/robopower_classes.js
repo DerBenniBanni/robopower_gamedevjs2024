@@ -126,7 +126,7 @@ class Game {
     }
     render() {
         ctx.clearRect(0, 0, gameWidth, gameHeight);
-        this.sprites.sort((s1, s2) => (s1.p.y) - (s2.p.y));
+        this.sprites.sort((s1, s2) => (s1.p.y + s1.sortMod) - (s2.p.y + s2.sortMod));
         this.sprites.forEach(s=>s.doRender(ctx));
         if(this.crt) {
             ctx.beginPath();
@@ -230,6 +230,7 @@ class Sprite {
         this.ttl = Infinity;
         this.rot = 0;
         this.hScale = 1;
+        this.sortMod = 0; // sort modifier
     }
     update(delta) {}
     doRender(context) {
@@ -253,7 +254,7 @@ class Sprite {
 
 
 class Robo extends Sprite {
-    constructor({x,y}) {
+    constructor({x, y, imagePool, spriteDef}) {
         super({x,y});
         //this.w = scale(32);
         //this.h = scale(32);
@@ -263,6 +264,9 @@ class Robo extends Sprite {
         this.hScale = 0.7;
         this.tasks = [];
         this.currentTask = null;
+        this.imagePool = imagePool;
+        this.spriteDef = spriteDef;
+        this.sortMod = scale(41);
     }
     update(delta) {
         super.update(delta);
@@ -305,7 +309,7 @@ class Robo extends Sprite {
     }
     render(context) {
         let rotDeg = Math.floor(toDeg(this.rot) % 360);
-        context.drawImage(roboImagePool.g(rotDeg).c,scale(-roboDefinition.origin.x),scale(-roboDefinition.origin.y));
+        context.drawImage(this.imagePool.g(rotDeg).c,scale(-this.spriteDef.origin.x),scale(-this.spriteDef.origin.y));
 
     }
 }
