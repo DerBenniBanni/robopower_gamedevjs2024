@@ -55,6 +55,9 @@ canvas {
 .btn:not(.active):hover {
 	color:var(--s);
 }
+.btn.fit {
+	width:auto;
+}
 .large {
 	width:6rem;
 }
@@ -69,6 +72,10 @@ canvas {
 .move {
 	--c:#33f;
 	--s:#33f8;
+}
+.audio {
+	--c:#f93;
+	--s:#f938;
 }
 .active {
 	color:var(--c);

@@ -23,7 +23,8 @@ const paths = {
         html: 'src/**.html',
         css: 'src/**.css',
         js: [
-            'src/a_musicplayer.js',
+            'src/musicplayer.js',
+            'src/song.js',
             'src/robopower_classes.js',
             'src/robopower_spritedefinitions.js',
             'src/robopower_game.js',

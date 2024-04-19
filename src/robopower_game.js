@@ -1,6 +1,38 @@
 
 const game = new Game();
 game.resize();
+const Music = {
+    gameAudio:null,
+    crashAudio:null,
+    playCrash() {
+        if(this.crashAudio) {
+            this.crashAudio.currentTime = 0;
+            this.crashAudio.play();
+        }
+    },
+    play() {
+        if(this.gameAudio) {
+            this.gameAudio.currentTime = 0;
+            this.gameAudio.play();
+        }
+    },
+    stop() {
+        if(this.gameAudio) {
+            this.gameAudio.pause();
+            this.gameAudio.currentTime = 0;
+        }
+    },
+}
+const loadMusic = (song, audioname, loop) => {
+    let musicplayer = new CPlayer();
+    musicplayer.init(song);
+    while(musicplayer.generate() < 1) {}
+    let wave = musicplayer.createWave();
+    Music[audioname] = document.createElement("audio");
+    Music[audioname].src = URL.createObjectURL(new Blob([wave], {type: "audio/wav"}));
+    Music[audioname].loop = loop;
+}
+loadMusic(song, 'gameAudio', true);
 
 const roboImagePool = new ImagePool();
 let p = new P(scale(roboDefinition.origin.x), scale(roboDefinition.origin.y));
@@ -72,20 +104,26 @@ const getButtonAction = button => button.getAttribute('t')*1;
 
 [...document.querySelectorAll('.btn')].forEach(btn => {
     btn.addEventListener('click',(ev)=>{
-        let target = ev.target;
-        let classList = target.classList;
+        let button = ev.target;
+        let task = button.closest('.task');
+        let classList = button.classList;
         if(classList.contains('execute')) {
             [...document.querySelectorAll('.task')].forEach(task => {
-                let button = task.querySelector('.btn.active');
-                if(button) {
-                    robo1.tasks.push(new Task(getButtonAction(button)));
+                let activeButton = task.querySelector('.btn.active');
+                if(activeButton) {
+                    robo1.tasks.push(new Task(getButtonAction(activeButton)));
                 }
             });
         } else if(classList.contains('reset')) {
 
+        } else if(classList.contains('audio')) {
+            button.classList.toggle('active');
+            if(button.classList.contains('active')) {
+                Music.play();
+            } else {
+                Music.stop();
+            }
         } else {
-            let button = ev.target;
-            let task = button.closest('.task');
             let action = getButtonAction(button);
             if(!button.classList.contains('active')) {
                 if([TASK_FORWARD, TASK_BACKWARD, TASK_TURN_LEFT, TASK_TURN_RIGHT].indexOf(action) > -1) {
