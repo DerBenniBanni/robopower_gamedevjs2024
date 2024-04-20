@@ -1,6 +1,6 @@
 const RECTANGLE = 0;
 const CIRCLE = 1;
-const lazerTowerDefinition = {
+const laserTowerDefinition = {
     w:64,
     h:80,
     origin:{x:32, y:65},
@@ -72,7 +72,7 @@ const lazerTowerDefinition = {
     ]
 }
 
-const lazerDefinition = {
+const laserDefinition = {
     w:64,
     h:80,
     origin:{x:32, y:65},
@@ -305,22 +305,22 @@ const robo2Definition = {
         
         // Neck
         [
-            [RECTANGLE, 14, 14, 6, 6, 0]
+            [RECTANGLE, 14, 13, 6, 6, 0]
         ],
         [
-            [RECTANGLE, 13, 14, 6, 6, 4]
+            [RECTANGLE, 13, 13, 6, 6, 4]
         ],
         [
-            [RECTANGLE, 12, 14, 6, 6, 0]
+            [RECTANGLE, 12, 13, 6, 6, 0]
         ],
         [
-            [RECTANGLE, 11, 14, 6, 6, 4]
+            [RECTANGLE, 11, 13, 6, 6, 4]
         ],
         [
-            [RECTANGLE, 10, 14, 6, 6, 0]
+            [RECTANGLE, 10, 13, 6, 6, 0]
         ],
         [
-            [RECTANGLE, 9, 14, 6, 6, 4]
+            [RECTANGLE, 9, 13, 6, 6, 4]
         ],
         //head
         [

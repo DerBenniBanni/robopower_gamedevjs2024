@@ -74,8 +74,8 @@ canvas {
 	--s:#33f8;
 }
 .audio {
-	--c:#f93;
-	--s:#f938;
+	--c:#c0f;
+	--s:#c0f8;
 }
 .active {
 	color:var(--c);
