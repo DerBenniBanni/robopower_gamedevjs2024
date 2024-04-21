@@ -1,43 +1,35 @@
+// defines the rendersize of the canvases
+const BASEWIDTH = 1920;
+const BASEHEIGHT = 900;
+
+// Game states (not used, yet...)
 const STATE_LOADING = 1;
 const STATE_MENU = 2;
 const STATE_GAME_RUNNING = 3;
 const STATE_GAME_FINISHED = 4;
 
-const BASEWIDTH = 1920;
-const BASEHEIGHT = 911;
-
-const setDim = (element, width, height) =>{
-    element.width = width; 
-    element.height = height;
-};
-
-const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
-let renderScale = 1;
-const scale = (value) => value * renderScale;
-const unscale = (value) => value / renderScale;
-const scaleI = (value) => Math.round(value * renderScale);
+//Math-related shortcuts
 const PI = Math.PI;
 const sin = Math.sin;
 const cos = Math.cos;
+const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+const abs = (value) => Math.abs(value);
 const toRad = (deg) => deg * (PI / 180);
 const toDeg = (rad) => rad / (PI / 180);
 const rand = (min, max) => Math.random() * (max - min) + min;
 const randInt = (min, max) => Math.round(rand(min, max));
-const abs = (value) => Math.abs(value);
-// shortcuts for canvas fill-/strokeStyle
-const stroke = (context, color) => context.strokeStyle = color;
-const fill = (context, color) => context.fillStyle = color;
 
+// handle Canvas sizes, generate 2d-contexts
+const initCanvas = (id) => {
+    let canvasElement = document.querySelector('#' + id);
+    canvasElement.width = BASEWIDTH; 
+    canvasElement.height = BASEHEIGHT;
+    return [canvasElement,canvasElement.getContext("2d")];
+}
+const [canvas, ctx] =  initCanvas('gameCanvas');
+const [bgCanvas, bgCtx] =  initCanvas('bgCanvas');
 
-
-
-const canvas = document.querySelector('#gameCanvas');
-const ctx = canvas.getContext("2d");
-const bgCanvas = document.querySelector('#bgCanvas');
-const bgCtx = bgCanvas.getContext("2d");
-let gameWidth = window.innerWidth;
-let gameHeight = window.innerHeight;
-
+// delta-time for updates
 let lastUpdate = Date.now();
 const getDelta = () => {
     let now = Date.now();
@@ -46,4 +38,13 @@ const getDelta = () => {
     return delta;
 }
 
-const translateContext = (context, x, y) => context.translate(scaleI(x),scale(y));
+// canvas-specific method-shortcuts for better minification of the code
+const translateContext = (context, x, y) => context.translate(x,y);
+const strokeStyle = (context, color) => context.strokeStyle = color;
+const fillStyle = (context, color) => context.fillStyle = color;
+const beginPath = (context) => context.beginPath();
+const moveTo = (context,x,y) => context.moveTo(x,y);
+const lineTo = (context,x,y) => context.lineTo(x,y);
+const stroke = (context) => context.stroke();
+const fill = (context) => context.fill();
+const fillRect = (context,x,y,w,h) => context.fillRect(x,y,w,h);

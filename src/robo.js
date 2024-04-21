@@ -5,8 +5,8 @@ class Robo extends Sprite {
     constructor({x, y, imagePool, spriteDef}) {
         super({x,y});
         this.ps = this.p.clone(); // last savepoint
-        //this.w = scale(32);
-        //this.h = scale(32);
+        //this.w = 32;
+        //this.h = 32;
         this.speed = 80;
         this.rotdir = 1;
         this.rotspeed = 180;
@@ -15,7 +15,7 @@ class Robo extends Sprite {
         this.currentTask = null;
         this.imagePool = imagePool;
         this.spriteDef = spriteDef;
-        this.sortMod = scale(41);
+        this.sortMod = 41;
         this.state = ROBOSTATE_OK;
         this.state_time = 0;
     }
@@ -24,7 +24,7 @@ class Robo extends Sprite {
         this.state_time += delta;
         if(this.state == ROBOSTATE_OK) {
             game.get(SPRITETYPE_HOLE).forEach(h=>{
-                if(abs(h.p.x - this.p.x) < scale(5) && abs(h.p.y - this.p.y) < scale(5)) {
+                if(abs(h.p.x - this.p.x) < 5 && abs(h.p.y - this.p.y) < 5) {
                     this.state = ROBOSTATE_HOLE;
                     this.state_time = 0;
                     this.tasks = [];
@@ -40,7 +40,7 @@ class Robo extends Sprite {
 
         if(!this.currentTask && this.tasks.length > 0) {
             this.currentTask = this.tasks.shift();
-            this.currentTask.setTarget(this);
+            this.currentTask.setTarget();
         }
         if(this.currentTask && this.currentTask.f) {
             this.currentTask = null;
@@ -51,12 +51,12 @@ class Robo extends Sprite {
         let move = null;
         switch(this.currentTask.t) {
             case TASK_FORWARD:
-                move = new P(scale(this.speed * delta),0);
+                move = new P(this.speed * delta,0);
                 move = move.rotate(this.rot);
                 this.p = this.p.addP(move);
             break;
             case TASK_BACKWARD:
-                move = new P(scale(-this.speed * delta),0);
+                move = new P(-this.speed * delta,0);
                 move = move.rotate(this.rot);
                 this.p = this.p.addP(move);
             break;
@@ -73,19 +73,19 @@ class Robo extends Sprite {
                 }
             break;
         }
-        this.currentTask.checkTarget(this);
+        this.currentTask.checkTarget();
     }
     renderStartExt(context) {
         if(this.state == ROBOSTATE_HOLE) {
             let scaling = (ROBO_HOLE_TIME - this.state_time) / ROBO_HOLE_TIME;
             context.scale(scaling, scaling);
-            context.translate(0, scale(60) * (1-scaling));
+            translateContext(context, 0, 60 * (1-scaling));
             context.globalAlpha = scaling;
         }
     }
     render(context) {
         let rotDeg = Math.floor(toDeg(this.rot) % 360);
         
-        context.drawImage(this.imagePool.g(rotDeg).c,scale(-this.spriteDef.origin.x),scale(-this.spriteDef.origin.y));
+        context.drawImage(this.imagePool.g(rotDeg).c,-this.spriteDef.origin.x,-this.spriteDef.origin.y);
     }
 }

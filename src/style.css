@@ -12,13 +12,16 @@ canvas {
 	position: absolute;
 	top: 0;
 	left: 0;
+	object-fit: contain;
 }
 #program {
 	position:absolute;
 	bottom:10px;
-	left: 10px;
+	left: 0px;
+	width:100vw;
 	display:flex;
 	flex-direction: row;
+	justify-content: center;
 }
 .task {
 	white-space: nowrap;
@@ -54,6 +57,7 @@ canvas {
 }
 .btn:not(.active):hover {
 	color:var(--s);
+	text-shadow: 0 0 15px var(--s);
 }
 .btn.fit {
 	width:auto;
@@ -76,6 +80,14 @@ canvas {
 .audio {
 	--c:#c0f;
 	--s:#c0f8;
+}
+.reset {
+	--c:#f00;
+	--s:#f00;
+}
+.execute {
+	--c:#0a0;
+	--s:#0a0;
 }
 .active {
 	color:var(--c);

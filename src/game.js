@@ -4,6 +4,7 @@ class Game {
         this.bgSprites = [];
         this.state = STATE_LOADING;
         this.crt = false; // CRT-Effect
+        this.setSize();
     }
 
     run() {
@@ -19,35 +20,40 @@ class Game {
         requestAnimationFrame(() => self.gameloop());
     }
 
-    resize() {
-        gameWidth = window.innerWidth;
-        gameHeight = window.innerHeight;
-        setDim(canvas, gameWidth, gameHeight);
-		ctx.clearRect(0, 0, gameWidth, gameHeight);
-        setDim(bgCanvas, gameWidth, gameHeight);
-        this.renderBg();
-        renderScale = Math.min(gameWidth/BASEWIDTH, gameHeight/BASEHEIGHT);
+    setSize() {
+        canvas.width = BASEWIDTH; 
+        canvas.height = BASEHEIGHT;
+        bgCanvas.width = BASEWIDTH; 
+        bgCanvas.height = BASEHEIGHT;
 	}
 
     renderBg() {
-        bgCtx.clearRect(0, 0, gameWidth, gameHeight);
+        bgCtx.clearRect(0, 0, BASEWIDTH, BASEHEIGHT);
         this.bgSprites.forEach(s=>s.doRender(bgCtx));
     }
     update(delta) {
+        if(activeTask) {
+            if(activeTask.checkTarget()) {
+                activeTask = null;
+            }
+        } else if(tasklist.length > 0) {
+            activeTask = tasklist.shift();
+            activeTask.b.tasks.push(activeTask);
+        }
         this.sprites.forEach(s=>s.update(delta));
     }
     render() {
-        ctx.clearRect(0, 0, gameWidth, gameHeight);
+        ctx.clearRect(0, 0, BASEWIDTH, BASEHEIGHT);
         this.sprites.sort((s1, s2) => (s1.p.y + s1.sortMod) - (s2.p.y + s2.sortMod));
         this.sprites.forEach(s=>s.doRender(ctx));
         if(this.crt) {
-            ctx.beginPath();
-            stroke(ctx,'#000000' + randInt(70,70));
-            for(let y = 1; y < scale(BASEHEIGHT); y += 3) {
-                ctx.moveTo(0,y);
-                ctx.lineTo(scale(BASEWIDTH), y);
+            beginPath(ctx);
+            strokeStyle(ctx,'#000000' + randInt(70,70));
+            for(let y = 1; y < BASEHEIGHT; y += 3) {
+                moveTo(ctx,0,y);
+                lineTo(ctx, BASEWIDTH, y);
             }
-            ctx.stroke();
+            stroke(ctx,);
         }
     }
 

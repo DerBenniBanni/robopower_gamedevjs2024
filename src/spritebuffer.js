@@ -8,4 +8,4 @@ class SpriteBuffer {
         this.colCircles = [];
     }
 }
-const getSpriteBuffer = (w,h) =>  new SpriteBuffer(scaleI(w),scaleI(h));
+const getSpriteBuffer = (w,h) =>  new SpriteBuffer(w,h);

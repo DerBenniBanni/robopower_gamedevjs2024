@@ -1,42 +1,50 @@
+// movement constants
 const TASK_FORWARD = 1;
 const TASK_BACKWARD = 2;
 const TASK_TURN_LEFT = 3;
 const TASK_TURN_RIGHT = 4;
+// special acions
 const TASK_POWERDOWN = 5;
-const TASK_EXTRAPOWER = 6;
+const TASK_MODIFIER_EXTRAPOWER = 6;
+
 class Task {
-    constructor(task, data) {
+    constructor(task, robo, modifier, sortorder) {
         this.t = task;
-        this.d = data;
+        this.b = robo; // the robot 
+        this.m = modifier; // the selected modifier (extrapower) 
+        this.o = sortorder; // the selected modifier (extrapower) 
         this.f = false; // finished
         this.p = null; // targetPoint
         this.r = null; // targetRotation
     }
-    setTarget(robo) {
-        let step = scale(40);
+    setTarget() {
+        let robo = this.b;
+        let step = 40;
         switch(this.t) {
             case TASK_FORWARD:
-                this.setMoveTarget(robo, step);
+                this.setMoveTarget(step);
             break;
             case TASK_BACKWARD:
-                this.setMoveTarget(robo, -step);
+                this.setMoveTarget(-step);
             break;
             case TASK_TURN_RIGHT:
-                this.setTurnTarget(robo, PI/2);
+                this.setTurnTarget(PI/2);
             break;
             case TASK_TURN_LEFT:
-                this.setTurnTarget(robo, -PI/2);
+                this.setTurnTarget(-PI/2);
             break;
         }
     }
-    setMoveTarget(robo, step) {
+    setMoveTarget(step) {
+        let robo = this.b;
         let target = new P(step,0);
         target = target.rotate(robo.rot);
         this.p = robo.p.addP(target);
         this.p.x = Math.round(this.p.x / step) * step - step/2;
         this.p.y = Math.round(this.p.y / step) * step - step/2;
     }
-    setTurnTarget(robo, rotDiff) {
+    setTurnTarget(rotDiff) {
+        let robo = this.b;
         this.r = Math.round((robo.rot + rotDiff) / (PI/2)) * (PI/2);
         if(this.r < 0) {
             this.r += PI * 2;
@@ -45,7 +53,8 @@ class Task {
             this.r -= PI * 2;
         }
     }
-    checkTarget(robo) {
+    checkTarget() {
+        let robo = this.b;
         switch(this.t) {
             case TASK_FORWARD:
             case TASK_BACKWARD:
@@ -67,4 +76,12 @@ class Task {
         }
         return false;
     }
+}
+
+// the tasklist to do in the current round
+const tasklist = [];
+let activeTask = null;
+
+const sortTasklist = () => {
+    tasklist.sort((task1, task2) => task1.o - task2.o);
 }

@@ -22,6 +22,10 @@ class ImagePool {
         }
         return this.p[this.c];
     }
+    // get random image
+    r() {
+        return this.g(randInt(0,this.p.length-1));
+    }
     // get length of image-pool
     l() {
         return this.p.length;

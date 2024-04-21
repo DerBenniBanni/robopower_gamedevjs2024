@@ -24,7 +24,7 @@ const paths = {
         css: 'src/**.css',
         js: [
             'src/basic_stuff.js',
-            'src/robopower_spritedefinitions.js',
+            'src/spritedefinitions.js',
             'src/spritebuffer.js',
             'src/imagepool.js',
             'src/musicplayer.js',
@@ -40,7 +40,8 @@ const paths = {
             'src/laser_tower.js',
             'src/laser.js',
             'src/belt.js',
-            'src/robopower_game.js',
+            'src/game.js',
+            'src/spritestacker.js',
             'src/robopower_rungame.js',
         ]
     },
