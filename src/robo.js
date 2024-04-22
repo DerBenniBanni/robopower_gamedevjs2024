@@ -1,9 +1,11 @@
+
 const ROBOSTATE_OK = 1;
 const ROBOSTATE_HOLE = 2;
 const ROBO_HOLE_TIME = 1;
 class Robo extends Sprite {
     constructor({x, y, imagePool, spriteDef}) {
         super({x,y});
+        this.t = SPRITETYPE_ROBO;
         this.ps = this.p.clone(); // last savepoint
         //this.w = 32;
         //this.h = 32;
@@ -62,18 +64,18 @@ class Robo extends Sprite {
             break;
             case TASK_TURN_LEFT:
                 this.rot -= toRad(this.rotspeed * delta);
-                if(this.rot < 0) {
-                    this.rot += PI*2
-                }
             break;
             case TASK_TURN_RIGHT:
                 this.rot += toRad(this.rotspeed * delta);
-                if(this.rot > PI*2) {
-                    this.rot -= PI*2
-                }
             break;
         }
-        this.currentTask.checkTarget();
+        if(this.rot < 0) {
+            this.rot += PI*2
+        }
+        if(this.rot > PI*2) {
+            this.rot -= PI*2
+        }
+        this.currentTask.finished();
     }
     renderStartExt(context) {
         if(this.state == ROBOSTATE_HOLE) {
@@ -85,7 +87,10 @@ class Robo extends Sprite {
     }
     render(context) {
         let rotDeg = Math.floor(toDeg(this.rot) % 360);
-        
+        if(rotDeg < 0) {
+            rotDeg += 360;
+        }
         context.drawImage(this.imagePool.g(rotDeg).c,-this.spriteDef.origin.x,-this.spriteDef.origin.y);
+        
     }
 }

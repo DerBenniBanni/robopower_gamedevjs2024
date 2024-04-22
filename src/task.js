@@ -6,11 +6,15 @@ const TASK_TURN_RIGHT = 4;
 // special acions
 const TASK_POWERDOWN = 5;
 const TASK_MODIFIER_EXTRAPOWER = 6;
+// board actions
+const TASK_BOARD_BELTS = 7;
+const TASK_BOARD_LASERS = 8;
 
 class Task {
     constructor(task, robo, modifier, sortorder) {
         this.t = task;
         this.b = robo; // the robot 
+        this.bo = []; // board-objects with this task
         this.m = modifier; // the selected modifier (extrapower) 
         this.o = sortorder; // the selected modifier (extrapower) 
         this.f = false; // finished
@@ -20,6 +24,9 @@ class Task {
     setTarget() {
         let robo = this.b;
         let step = 40;
+        robo.p.x = round(robo.p.x / step) * step - step/2;
+        robo.p.y = round(robo.p.y / step) * step - step/2;
+        robo.rot = round(robo.rot / (PI/2)) * PI/2;
         switch(this.t) {
             case TASK_FORWARD:
                 this.setMoveTarget(step);
@@ -53,7 +60,15 @@ class Task {
             this.r -= PI * 2;
         }
     }
-    checkTarget() {
+    finished() {
+        if(!this.b) {
+            if(this.bo.length == 0) {
+                // no objects, no todo
+                return true;
+            }
+            // check all assigned objects, if any of them has a remaining task
+            return this.bo.filter(o => o.task).length == 0;
+        }
         let robo = this.b;
         switch(this.t) {
             case TASK_FORWARD:
@@ -84,4 +99,24 @@ let activeTask = null;
 
 const sortTasklist = () => {
     tasklist.sort((task1, task2) => task1.o - task2.o);
+}
+
+const insertBoardTasks = () => {
+    let tasks = [...tasklist];
+    tasklist.length = 0;
+    let robos = game.get(SPRITETYPE_ROBO).length;
+    let lastOrder = -1;
+    for(let i = 0; i < tasks.length; i++) {
+        let task = tasks[i];
+        lastOrder = task.o;
+        if(i > 0 && i % robos == 0) {
+            addBoardTasks(lastOrder);
+        }
+        tasklist.push(task);
+    }
+    addBoardTasks(lastOrder);
+}
+const addBoardTasks = (lastOrder) => {
+    tasklist.push(new Task(TASK_BOARD_BELTS, null, null, lastOrder + 1));
+    tasklist.push(new Task(TASK_BOARD_LASERS, null, null, lastOrder + 2));
 }

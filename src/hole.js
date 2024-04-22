@@ -1,4 +1,4 @@
-const SPRITETYPE_HOLE = "hole";
+
 const HOLEBORDER = 5;
 const HOLESIZE = FLOORSIZE_SCALED + 2* HOLEBORDER;
 const holeSpriteBuffer = getSpriteBuffer(HOLESIZE, HOLESIZE);

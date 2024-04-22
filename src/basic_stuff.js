@@ -8,6 +8,12 @@ const STATE_MENU = 2;
 const STATE_GAME_RUNNING = 3;
 const STATE_GAME_FINISHED = 4;
 
+// SPRITETYPES
+const SPRITETYPE_SPRITE = 0;
+const SPRITETYPE_ROBO = 1;
+const SPRITETYPE_HOLE = 2;
+const SPRITETYPE_BELT = 3;
+
 //Math-related shortcuts
 const PI = Math.PI;
 const sin = Math.sin;
@@ -16,8 +22,12 @@ const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 const abs = (value) => Math.abs(value);
 const toRad = (deg) => deg * (PI / 180);
 const toDeg = (rad) => rad / (PI / 180);
+const round = Math.round;
 const rand = (min, max) => Math.random() * (max - min) + min;
-const randInt = (min, max) => Math.round(rand(min, max));
+const randInt = (min, max) => round(rand(min, max));
+
+
+const samePosition = (p1, p2, delta) => abs(p1.x - p2.x) < delta && abs(p1.y - p2.y) < delta;
 
 // handle Canvas sizes, generate 2d-contexts
 const initCanvas = (id) => {

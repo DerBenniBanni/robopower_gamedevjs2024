@@ -11,7 +11,7 @@ const laserImagePool = createStackedSprite(laserDefinition, 90);
 
 game.run();
 
-let robo1 = game.add(new Robo({x:220, y:300,imagePool:roboImagePool, spriteDef:roboDefinition}));
+let robo1 = game.add(new Robo({x:380, y:660,imagePool:roboImagePool, spriteDef:roboDefinition}));
 /*[
     TASK_FORWARD,TASK_FORWARD,
     TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,
@@ -52,9 +52,8 @@ for(let x = 60; x < 1900; x+=40) {
     }
 }
 
-game.add(new Belt({x:380, y:660, d:BELT_UP}));
-game.add(new Belt({x:380, y:620, d:BELT_UP, t:BELT_TURN_RIGHT}));
-game.add(new Belt({x:420, y:620, d:BELT_RIGHT}));
+game.add(new Belt({x:420, y:660, d:BELT_UP}));
+game.add(new Belt({x:420, y:620, d:BELT_UP, t:BELT_TURN_RIGHT}));
 game.add(new Belt({x:460, y:620, d:BELT_RIGHT, t:BELT_TURN_LEFT}));
 game.add(new Belt({x:460, y:580, d:BELT_UP}));
 
@@ -97,9 +96,14 @@ const getButtonAction = button => button.getAttribute('t')*1;
                 appendTask(robo2, taskIndex, randInt(1,4), false);
                 appendTask(robo3, taskIndex, randInt(1,4), false);
             });
+            sortTasklist();
+            insertBoardTasks();
         } else if(classList.contains('reset')) {
             [...document.querySelectorAll('.task .btn')].forEach((btn) => {
                 btn.classList.remove('active');
+                if(btn.classList.contains('powerdown')) {
+                    btn.classList.add('active');
+                }
             });
         } else if(classList.contains('audio')) {
             button.classList.toggle('active');

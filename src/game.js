@@ -33,12 +33,23 @@ class Game {
     }
     update(delta) {
         if(activeTask) {
-            if(activeTask.checkTarget()) {
+            if(activeTask.finished()) {
                 activeTask = null;
             }
         } else if(tasklist.length > 0) {
             activeTask = tasklist.shift();
-            activeTask.b.tasks.push(activeTask);
+            if(TASK_BOARD_BELTS == activeTask.t) {
+                // TODO: BELTS
+                this.get(SPRITETYPE_BELT).forEach(belt => {
+                    belt.addTask(activeTask);
+                });
+            } else if(TASK_BOARD_LASERS == activeTask.t) {
+                // TODO: LASERS
+                activeTask.f = true;
+            } else {
+                // assign task to its robot
+                activeTask.b.tasks.push(activeTask);
+            }
         }
         this.sprites.forEach(s=>s.update(delta));
     }
@@ -70,4 +81,5 @@ class Game {
     get(spritetype) {
         return this.sprites.filter(s => (s.t || '') == spritetype);
     }
+
 }

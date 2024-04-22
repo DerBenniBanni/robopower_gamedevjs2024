@@ -1,4 +1,4 @@
-const SPRITETYPE_SPRITE = "sprite";
+
 class Sprite {
     constructor({x,y}) {
         this.t = SPRITETYPE_SPRITE;
