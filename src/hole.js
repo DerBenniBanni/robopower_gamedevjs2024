@@ -40,6 +40,8 @@ class Hole extends Sprite {
     constructor({x, y, d, t}) {
         super({x,y});
         this.t = SPRITETYPE_HOLE;
+        
+        this.sortMod = -40;
     }
 
     render(context) {

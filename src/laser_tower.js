@@ -20,6 +20,7 @@ class LaserTower extends Sprite {
         let move = new P(STEPSIZE * 0.5, 0);
         move = move.rotate(this.rot);
         let laserpos = this.p.addP(move);
+        cleanupRotation(this);
         game.add(new Laser({
             x:laserpos.x, y:laserpos.y,
             d:this.rot,
