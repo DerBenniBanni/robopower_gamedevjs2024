@@ -15,6 +15,20 @@ const laserTowerDefinition = {
     ],    
     layers: [
         // base
+        
+        [
+            [CIRCLE, 0, 0, 12, 1],
+        ],
+        [
+            [CIRCLE, 0, 0, 11, 0],
+        ],
+        [
+            [CIRCLE, 0, 0, 9, 1],
+        ],
+        [
+            [CIRCLE, 0, 0, 7, 0],
+        ],
+        /*
         [
             [RECTANGLE, 0, 0, 32, 32, 1],
             [RECTANGLE, 1, 1, 30, 30, 0],
@@ -40,7 +54,7 @@ const laserTowerDefinition = {
         [
             [RECTANGLE, 3, 3, 26, 26, 1],
             [RECTANGLE, 4, 4, 24, 24, 0],
-        ],
+        ],*/
         [
             [CIRCLE, 0, 0, 5, 1],
         ],

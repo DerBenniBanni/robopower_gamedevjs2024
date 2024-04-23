@@ -24,6 +24,7 @@ class Robo extends Sprite {
     update(delta) {
         super.update(delta);
         this.state_time += delta;
+        // Handle Hole-Collisions
         if(this.state == ROBOSTATE_OK) {
             game.get(SPRITETYPE_HOLE).forEach(h=>{
                 if(abs(h.p.x - this.p.x) < 5 && abs(h.p.y - this.p.y) < 5) {
@@ -40,6 +41,7 @@ class Robo extends Sprite {
             }
         }
 
+        // handle Task-assignment
         if(!this.currentTask && this.tasks.length > 0) {
             this.currentTask = this.tasks.shift();
             this.currentTask.setTarget();
@@ -50,17 +52,12 @@ class Robo extends Sprite {
         if(!this.currentTask) {
             return;
         }
-        let move = null;
         switch(this.currentTask.t) {
             case TASK_FORWARD:
-                move = new P(this.speed * delta,0);
-                move = move.rotate(this.rot);
-                this.p = this.p.addP(move);
+                this.updateMove(this.speed, delta);
             break;
             case TASK_BACKWARD:
-                move = new P(-this.speed * delta,0);
-                move = move.rotate(this.rot);
-                this.p = this.p.addP(move);
+                this.updateMove(-this.speed, delta);
             break;
             case TASK_TURN_LEFT:
                 this.rot -= toRad(this.rotspeed * delta);
@@ -75,7 +72,12 @@ class Robo extends Sprite {
         if(this.rot > PI*2) {
             this.rot -= PI*2
         }
-        this.currentTask.finished();
+    }
+    updateMove(speed, delta) {
+        let move = new P(speed * delta,0);
+        move = move.rotate(this.rot);
+        this.p = this.p.addP(move);
+        this.currentTask.pushed.forEach(pushed=>pushed.p = pushed.p.addP(move));
     }
     renderStartExt(context) {
         if(this.state == ROBOSTATE_HOLE) {
@@ -91,6 +93,13 @@ class Robo extends Sprite {
             rotDeg += 360;
         }
         context.drawImage(this.imagePool.g(rotDeg).c,-this.spriteDef.origin.x,-this.spriteDef.origin.y);
-        
+        if(this.currentTask && this.currentTask.t == TASK_POWERDOWN) {
+            fillStyle(context, '#333');
+            fillRect(context,-5,-15,10,20);
+            fillRect(context,-2,-17,4,2);
+            fillStyle(context, '#7f8');
+            let h = 18 * (1- this.currentTask.timer / POWERDOWN_TIME);
+            fillRect(context,-4, 4 - h, 8,h);
+        }
     }
 }

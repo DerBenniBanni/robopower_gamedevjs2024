@@ -28,7 +28,7 @@ class Belt extends Sprite {
         task.bo.push(this)
         this.a = 0;
         this.task = task;
-        this.o = game.get(SPRITETYPE_ROBO).find(robo => samePosition(robo.p, this.p, 5));
+        this.o = game.get([SPRITETYPE_ROBO, SPRITETYPE_LASERTOWER]).find(robo => samePosition(robo.p, this.p, 5));
         let move = new P(40,0);
         move = move.rotate(this.getDir());
         let p = this.p.addP(move);
@@ -66,9 +66,13 @@ class Belt extends Sprite {
                 this.task = null;
                 this.a = 0;
                 if(this.o) {
+                    cleanupPosition(this.o);
+                    cleanupRotation(this.o);
+                    /*
                     let move = new P(40,0);
                     move = move.rotate(direction);
                     this.o.p = this.p.addP(move);
+                    */
                 }
             }
         }

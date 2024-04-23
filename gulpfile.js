@@ -33,6 +33,7 @@ const paths = {
             'src/color.js',
             'src/point.js',
             'src/sprite.js',
+            'src/particle.js',
             'src/task.js',
             'src/robo.js',
             'src/floor.js',

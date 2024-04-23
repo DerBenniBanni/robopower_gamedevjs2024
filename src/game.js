@@ -33,25 +33,27 @@ class Game {
     }
     update(delta) {
         if(activeTask) {
-            if(activeTask.finished()) {
+            if(activeTask.finished(delta)) {
                 activeTask = null;
             }
         } else if(tasklist.length > 0) {
             activeTask = tasklist.shift();
             if(TASK_BOARD_BELTS == activeTask.t) {
-                // TODO: BELTS
-                this.get(SPRITETYPE_BELT).forEach(belt => {
+                game.get(SPRITETYPE_BELT).forEach(belt => {
                     belt.addTask(activeTask);
                 });
             } else if(TASK_BOARD_LASERS == activeTask.t) {
-                // TODO: LASERS
-                activeTask.f = true;
+                game.get(SPRITETYPE_LASERTOWER).forEach(lt => lt.fire());
             } else {
                 // assign task to its robot
                 activeTask.b.tasks.push(activeTask);
             }
         }
-        this.sprites.forEach(s=>s.update(delta));
+        this.sprites = this.sprites.filter(s => s.ttl > 0);
+        this.sprites.forEach(s=> {
+            s.ttl -= delta;
+            s.update(delta);
+        });
     }
     render() {
         ctx.clearRect(0, 0, BASEWIDTH, BASEHEIGHT);
@@ -79,7 +81,8 @@ class Game {
         return sprite;
     }
     get(spritetype) {
-        return this.sprites.filter(s => (s.t || '') == spritetype);
+        let spritetypes = Array.isArray(spritetype) ? spritetype : [spritetype]; 
+        return this.sprites.filter(s => spritetypes.includes(s.t));
     }
 
 }

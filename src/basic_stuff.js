@@ -13,6 +13,8 @@ const SPRITETYPE_SPRITE = 0;
 const SPRITETYPE_ROBO = 1;
 const SPRITETYPE_HOLE = 2;
 const SPRITETYPE_BELT = 3;
+const SPRITETYPE_LASERTOWER = 4;
+const SPRITETYPE_LASER = 5;
 
 //Math-related shortcuts
 const PI = Math.PI;

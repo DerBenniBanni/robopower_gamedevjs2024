@@ -6,46 +6,15 @@ loadMusic(song, 'gameAudio', true);
 const roboImagePool = createStackedSprite(roboDefinition);
 const robo2ImagePool = createStackedSprite(robo2Definition);
 const robo3ImagePool = createStackedSprite(robo3Definition);
-const laserTowerImagePool = createStackedSprite(laserTowerDefinition, 90);
+const laserTowerImagePool = createStackedSprite(laserTowerDefinition);
 const laserImagePool = createStackedSprite(laserDefinition, 90);
 
 game.run();
 
-let robo1 = game.add(new Robo({x:380, y:660,imagePool:roboImagePool, spriteDef:roboDefinition}));
-/*[
-    TASK_FORWARD,TASK_FORWARD,
-    TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,
-    TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,
-    TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,
-    TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,
-    TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,
-    TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,
-    TASK_FORWARD,TASK_FORWARD,TASK_TURN_RIGHT,
-].forEach(t => robo1.tasks.push(new Task(t)));
-*/
+let robo1 = game.add(new Robo({x:340, y:660,imagePool:roboImagePool, spriteDef:roboDefinition}));
 let robo2 = game.add(new Robo({x:460, y:380,imagePool:robo2ImagePool, spriteDef:robo2Definition}));
-/*[
-    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
-    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
-    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
-    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
-    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
-    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
-    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
-].forEach(t => robo2.tasks.push(new Task(t)));
-*/
-
 let robo3 = game.add(new Robo({x:340, y:460,imagePool:robo3ImagePool, spriteDef:robo3Definition}));
-/*[
-    TASK_TURN_LEFT,TASK_FORWARD,TASK_FORWARD,
-    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
-    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
-    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
-    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
-    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
-    TASK_TURN_RIGHT,TASK_FORWARD,TASK_FORWARD,
-].forEach(t => robo3.tasks.push(new Task(t)));
-*/
+
 for(let x = 60; x < 1900; x+=40) {
     for(let y = 60; y < 760; y+=40) {
         game.addBg(new Floor({x,y}));
@@ -57,11 +26,20 @@ game.add(new Belt({x:420, y:620, d:BELT_UP, t:BELT_TURN_RIGHT}));
 game.add(new Belt({x:460, y:620, d:BELT_RIGHT, t:BELT_TURN_LEFT}));
 game.add(new Belt({x:460, y:580, d:BELT_UP}));
 
-game.add(new LaserTower({x:580,y:580,d:BELT_RIGHT, imagePool:laserTowerImagePool, spriteDef:laserTowerDefinition}));
-game.add(new Laser({x:620,y:580,d:BELT_RIGHT, imagePool:laserImagePool, spriteDef:laserDefinition}));
+game.add(new Belt({x:420, y:380, d:BELT_UP}));
+game.add(new Belt({x:420, y:340, d:BELT_UP, t:BELT_TURN_RIGHT}));
+game.add(new Belt({x:460, y:340, d:BELT_RIGHT}));
+game.add(new Belt({x:500, y:340, d:BELT_RIGHT, t:BELT_TURN_RIGHT}));
+game.add(new Belt({x:500, y:380, d:BELT_DOWN}));
+game.add(new Belt({x:500, y:420, d:BELT_DOWN, t:BELT_TURN_RIGHT}));
+game.add(new Belt({x:460, y:420, d:BELT_LEFT}));
+game.add(new Belt({x:420, y:420, d:BELT_LEFT, t:BELT_TURN_RIGHT}));
 
-game.add(new LaserTower({x:580,y:380,d:BELT_DOWN, imagePool:laserTowerImagePool, spriteDef:laserTowerDefinition}));
-game.add(new Laser({x:580,y:420,d:BELT_DOWN, imagePool:laserImagePool, spriteDef:laserDefinition}));
+game.add(new LaserTower({x:580,y:660,d:BELT_LEFT, imagePool:laserTowerImagePool, spriteDef:laserTowerDefinition}));
+//game.add(new Laser({x:620,y:580,d:BELT_RIGHT, imagePool:laserImagePool, spriteDef:laserDefinition}));
+
+game.add(new LaserTower({x:460,y:340,d:BELT_RIGHT, imagePool:laserTowerImagePool, spriteDef:laserTowerDefinition}));
+//game.add(new Laser({x:580,y:420,d:BELT_DOWN, imagePool:laserImagePool, spriteDef:laserDefinition}));
 
 game.add(new Hole({x:380, y:380}));
 game.add(new Hole({x:620, y:420}));

@@ -34,5 +34,6 @@ class Color {
     fade(a) {
         a = Math.round(a);
         this.a = clamp(this.a - a, 0, 255);
+        return this
     }
 }

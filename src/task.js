@@ -10,6 +10,18 @@ const TASK_MODIFIER_EXTRAPOWER = 6;
 const TASK_BOARD_BELTS = 7;
 const TASK_BOARD_LASERS = 8;
 
+const STEPSIZE = 40;
+const cleanupToStepsize = (value) => round((value - STEPSIZE/2) / STEPSIZE) * STEPSIZE + STEPSIZE/2;
+const cleanupPosition = (obj) => {
+    obj.p.x = cleanupToStepsize(obj.p.x);
+    obj.p.y = cleanupToStepsize(obj.p.y);
+}
+const cleanupRotation = (obj) => {
+    obj.rot = round(obj.rot / (PI/2)) * PI/2;
+}
+
+const POWERDOWN_TIME = 1;
+
 class Task {
     constructor(task, robo, modifier, sortorder) {
         this.t = task;
@@ -20,25 +32,27 @@ class Task {
         this.f = false; // finished
         this.p = null; // targetPoint
         this.r = null; // targetRotation
+        this.pushed = []; // pushed objects from robo-movement
+        this.timer = 0;
     }
     setTarget() {
-        let robo = this.b;
-        let step = 40;
-        robo.p.x = round(robo.p.x / step) * step - step/2;
-        robo.p.y = round(robo.p.y / step) * step - step/2;
-        robo.rot = round(robo.rot / (PI/2)) * PI/2;
+        cleanupPosition(this.b);
+        cleanupRotation(this.b);
         switch(this.t) {
             case TASK_FORWARD:
-                this.setMoveTarget(step);
+                this.setMoveTarget(STEPSIZE);
             break;
             case TASK_BACKWARD:
-                this.setMoveTarget(-step);
+                this.setMoveTarget(-STEPSIZE);
             break;
             case TASK_TURN_RIGHT:
                 this.setTurnTarget(PI/2);
             break;
             case TASK_TURN_LEFT:
                 this.setTurnTarget(-PI/2);
+            break;
+            case TASK_POWERDOWN:
+                this.timer = POWERDOWN_TIME;
             break;
         }
     }
@@ -47,8 +61,14 @@ class Task {
         let target = new P(step,0);
         target = target.rotate(robo.rot);
         this.p = robo.p.addP(target);
-        this.p.x = Math.round(this.p.x / step) * step - step/2;
-        this.p.y = Math.round(this.p.y / step) * step - step/2;
+        let p2 = this.p.addP(target);
+        cleanupPosition(this);
+        let blocked = game.get([SPRITETYPE_LASERTOWER]).filter(o => samePosition(o.p, this.p, 5));
+        let blockedSecondField = game.get([SPRITETYPE_ROBO, SPRITETYPE_LASERTOWER]).filter(o => samePosition(o.p, this.p, 5));
+        this.pushed = game.get([SPRITETYPE_ROBO]).filter(o => samePosition(o.p, this.p, 5));
+        if(blocked.length > 0 || (this.pushed.length > 0 && blockedSecondField.length > 0)) {
+            this.f = true;
+        }
     }
     setTurnTarget(rotDiff) {
         let robo = this.b;
@@ -60,14 +80,20 @@ class Task {
             this.r -= PI * 2;
         }
     }
-    finished() {
+    
+    finished(delta) {
         if(!this.b) {
-            if(this.bo.length == 0) {
-                // no objects, no todo
-                return true;
+            switch(this.t) {
+                case TASK_BOARD_BELTS:
+                    // check all belt tasks
+                    return this.bo.filter(o => o.task).length == 0;
+                case TASK_BOARD_LASERS:
+                    // check all lasers
+                    return game.get(SPRITETYPE_LASER).length == 0;
             }
-            // check all assigned objects, if any of them has a remaining task
-            return this.bo.filter(o => o.task).length == 0;
+        }
+        if(this.f) {
+            return true;
         }
         let robo = this.b;
         switch(this.t) {
@@ -77,7 +103,7 @@ class Task {
                     robo.p.x = this.p.x;
                     robo.p.y = this.p.y;
                     this.f = true;
-                    return true;
+                    this.pushed.forEach(pushed => cleanupPosition(pushed));
                 } 
             break;
             case TASK_TURN_RIGHT:
@@ -85,11 +111,14 @@ class Task {
                 if(abs(robo.rot - this.r) < PI/30) {
                     robo.rot = this.r;
                     this.f = true;
-                    return true;
                 }
             break;
+            case TASK_POWERDOWN:
+                this.timer -= delta;
+                this.f = this.timer < 0;
+            break;
         }
-        return false;
+        return this.f;
     }
 }
 
