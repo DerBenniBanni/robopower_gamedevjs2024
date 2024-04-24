@@ -60,3 +60,5 @@ const lineTo = (context,x,y) => context.lineTo(x,y);
 const stroke = (context) => context.stroke();
 const fill = (context) => context.fill();
 const fillRect = (context,x,y,w,h) => context.fillRect(x,y,w,h);
+
+const powerDiv = document.querySelector('.power');

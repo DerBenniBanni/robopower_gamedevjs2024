@@ -18,6 +18,9 @@ class P {
     div(divisor) {
         return new P(this.x/divisor, this.y/divisor);
     }
+    multi(factor) {
+        return new P(this.x*factor, this.y*factor);
+    }
     rotate(angle) {
         return new P(this.x * cos(angle) - this.y * sin(angle), this.x * sin(angle) + this.y * cos(angle));
     }

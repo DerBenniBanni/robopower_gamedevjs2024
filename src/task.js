@@ -5,7 +5,7 @@ const TASK_TURN_LEFT = 3;
 const TASK_TURN_RIGHT = 4;
 // special acions
 const TASK_POWERDOWN = 5;
-const TASK_MODIFIER_EXTRAPOWER = 6;
+const TASK_ELECTRIC_PULSE = 6;
 // board actions
 const TASK_BOARD_BELTS = 7;
 const TASK_BOARD_LASERS = 8;
@@ -21,6 +21,7 @@ const cleanupRotation = (obj) => {
 }
 
 const POWERDOWN_TIME = 1;
+const ELECTRIC_PULSE_TIME = 2;
 
 class Task {
     constructor(task, robo, modifier, sortorder) {
@@ -53,6 +54,9 @@ class Task {
             break;
             case TASK_POWERDOWN:
                 this.timer = POWERDOWN_TIME;
+            break;
+            case TASK_ELECTRIC_PULSE:
+                this.timer = ELECTRIC_PULSE_TIME;
             break;
         }
     }
@@ -116,6 +120,20 @@ class Task {
             case TASK_POWERDOWN:
                 this.timer -= delta;
                 this.f = this.timer < 0;
+                if(this.f) {
+                    robo.power = clamp(robo.power+POWERDOWN_GAIN, 0, 9);
+                    robo.showPower();
+                    activeTask = null;
+                }
+            break;
+            case TASK_ELECTRIC_PULSE:
+                this.timer -= delta;
+                this.f = this.timer < 0;
+                if(this.f) {
+                    robo.power = clamp(robo.power-ELECTRIC_PULSE_COST, 0, 9);
+                    robo.showPower();
+                    activeTask = null;
+                }
             break;
         }
         return this.f;

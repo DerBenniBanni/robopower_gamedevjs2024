@@ -12,6 +12,7 @@ const laserImagePool = createStackedSprite(laserDefinition, 90);
 game.run();
 
 let robo1 = game.add(new Robo({x:340, y:660,imagePool:roboImagePool, spriteDef:roboDefinition}));
+robo1.showPower();
 let robo2 = game.add(new Robo({x:460, y:380,imagePool:robo2ImagePool, spriteDef:robo2Definition}));
 let robo3 = game.add(new Robo({x:340, y:460,imagePool:robo3ImagePool, spriteDef:robo3Definition}));
 
@@ -54,7 +55,11 @@ const appendTask = (robot, taskIndex, taskAction, boost) => {
 
 // GUI Listeners
 const getButtonAction = button => button.getAttribute('t')*1;
-
+document.querySelector('#title').addEventListener("click", (ev) => {
+    document.querySelector('#title').classList.add("hidden");
+    document.querySelector('#program').classList.remove("hidden");
+    document.querySelector('.btn.audio').click();
+});
 [...document.querySelectorAll('.btn')].forEach(btn => {
     btn.addEventListener('click',(ev)=>{
         let button = ev.target;
@@ -93,15 +98,9 @@ const getButtonAction = button => button.getAttribute('t')*1;
         } else {
             let action = getButtonAction(button);
             if(!button.classList.contains('active')) {
-                if([TASK_FORWARD, TASK_BACKWARD, TASK_TURN_LEFT, TASK_TURN_RIGHT].indexOf(action) > -1) {
-                    [...task.querySelectorAll('.btn.active.move, .btn.active.powerdown')].forEach(b => b.classList.remove('active'));
-                } else if(TASK_POWERDOWN == action) {
-                    [...task.querySelectorAll('.btn.active.move, .btn.active.boost')].forEach(b => b.classList.remove('active'));
-                } else if(TASK_MODIFIER_EXTRAPOWER == action) {
-                    [...task.querySelectorAll('.btn.active.powerdown')].forEach(b => b.classList.remove('active'));
-                }
+                [...task.querySelectorAll('.btn.active')].forEach(b => b.classList.remove('active'));
             }
-            button.classList.toggle('active');
+            button.classList.add('active');
         }
     })
 });

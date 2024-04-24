@@ -4,6 +4,7 @@ body {
 	font-family: sans-serif;
     overflow:hidden;
 	background-color: black;
+	cursor:default;
 }
 canvas {
 	width:100vw;
@@ -13,6 +14,35 @@ canvas {
 	top: 0;
 	left: 0;
 	object-fit: contain;
+}
+.hidden {
+	visibility:hidden;
+}
+#title {
+	position:absolute;
+	left:0;
+	right:0;  
+	margin-left: auto;
+	margin-right: auto;
+	top:100px;
+	width:calc(100vw - 200px);
+	min-height: calc(100vh - 200px);
+	background-color: #030c;
+	color:#8f8;
+	border: 3px solid #dfc;
+	border-radius: 20px;;
+	font: bold 20px 'Courier New', Courier, monospace;
+	padding:10px;
+	text-align: center;
+	cursor:pointer;
+	text-shadow:3px 3px 3px #000;
+	box-shadow: 0 0 20px 5px #8f8, inset 0 0 10px 2px #8f8;
+}
+.big {
+	font-size: 2em;
+}
+.white {
+	color:#fff;
 }
 #program {
 	position:absolute;
@@ -25,31 +55,40 @@ canvas {
 }
 .control {
 	white-space: nowrap;
-	padding:10px;
+	padding:5px;
 	margin:2px;
 	border-radius: 8px;
 	border: 3px solid;
 	border-color: #fff5 #0005 #0005 #fff5;
 }
+.power {
+	background-color:#030;
+	height:65px;
+	color:#8f8;
+	text-align: center;
+	vertical-align: middle;
+	font: 60px 'Courier New', Courier, monospace;
+	border:inset;
+	border-radius: 12px;
+}
 .metal {
 	outline: none;
 	color: #333;
 	text-shadow: #6668 -1px -1px 1px, #fff9 0 2px 1px;
-	background-color: hsl(0,0%,90%);
 	background-image: repeating-linear-gradient(90deg, #aaa5 0%, #ccc5 1%, #bbb5 1.5%),
 		repeating-linear-gradient(80deg, #aaa5 0%, #ccc5 5%, #bbb5 7%),
-		linear-gradient(180deg, hsl(0,0%,78%)  0%, #eee 47%,#ccc 53%,#bbb 100%);
+		linear-gradient(180deg, #c7c7c7  0%, #eee 47%,#ccc 53%,#bbb 100%);
 
 }
 .btn {
 	transition: color .2s;
-	font: bold 1rem sans-serif;
+	font: bold 14px sans-serif;
 	text-align: center;
 	vertical-align: middle;
-	border-radius: 0.3rem;
-	width:3rem;
-	height:2.5rem;
-	margin:4px;
+	border-radius: 6px;
+	width:50px;
+	height:40px;
+	margin:2px;
 	box-shadow:
 		-2px -2px 2px #0003,
 		2px 2px 2px #fff8;
@@ -57,7 +96,7 @@ canvas {
 }
 .btn:not(.active):hover {
 	color:var(--s);
-	text-shadow: 0 0 15px var(--s);
+	text-shadow: 0 0 20px #fff; 
 }
 .btn.fit {
 	width:auto;
@@ -65,13 +104,14 @@ canvas {
 .large {
 	width:6rem;
 }
-.powerdown {
+.pulse {
 	--c:#f00;
 	--s:#f008;
 }
-.boost {
+.powerdown {
 	--c:#0a0;
 	--s:#0a08;
+	font-size:12px;
 }
 .move {
 	--c:#33f;
@@ -96,5 +136,5 @@ canvas {
 	box-shadow:
 		-2px -2px 2px #0003,
 		2px 2px 2px #fff8,
-		inset 2px 2px 3px -1px #0008;
+		inset 2px 2px 3px -1px #000c;
 }

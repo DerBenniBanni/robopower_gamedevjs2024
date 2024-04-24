@@ -20,6 +20,10 @@ class Laser extends Sprite {
         game.get([SPRITETYPE_ROBO, SPRITETYPE_LASERTOWER]).forEach(obj => {
             if(samePosition(obj.p, this.p, 10)) {
                 this.ttl = 0;
+                if(obj.t == SPRITETYPE_ROBO && obj.isPlayer) {
+                    obj.power = clamp(obj.power-LASER_COST, 0, 9);
+                    obj.showPower();
+                }
                 for(let i = 0; i < 30; i++) {
                     game.add(new Particle(
                         this.p.x + rand(-5,5), 

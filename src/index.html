@@ -12,46 +12,52 @@
 <body>
     <canvas id="bgCanvas"></canvas>
     <canvas id="gameCanvas"></canvas>
-    <div id="program">
-        <div class="control task metal">
-            <button class="metal btn move" t="3">TL</button>
-            <button class="metal btn move" t="1">FW</button>
-            <button class="metal btn move" t="4">TR</button><br>
-            <button class="metal btn powerdown active" t="5">PD</button>
-            <button class="metal btn move" t="2">BW</button>
-            <button class="metal btn boost" t="6">EP</button>
+    <div id="program" class="hidden">
+        <div class="control metal">
+            <b>POWER</b><br>
+            <div class="power">
+                9
+            </div>
         </div>
         <div class="control task metal">
-            <button class="metal btn move" t="3">TL</button>
+            <button class="metal btn move" t="3">left</button>
             <button class="metal btn move" t="1">FW</button>
-            <button class="metal btn move" t="4">TR</button><br>
-            <button class="metal btn powerdown active" t="5">PD</button>
+            <button class="metal btn move" t="4">right</button><br>
+            <button class="metal btn powerdown active" t="5">Power<br>Down</button>
             <button class="metal btn move" t="2">BW</button>
-            <button class="metal btn boost" t="6">EP</button>
+            <button class="metal btn pulse" t="6">FIRE</button>
         </div>
         <div class="control task metal">
-            <button class="metal btn move" t="3">TL</button>
+            <button class="metal btn move" t="3">left</button>
             <button class="metal btn move" t="1">FW</button>
-            <button class="metal btn move" t="4">TR</button><br>
-            <button class="metal btn powerdown active" t="5">PD</button>
+            <button class="metal btn move" t="4">right</button><br>
+            <button class="metal btn powerdown active" t="5">Power<br>Down</button>
             <button class="metal btn move" t="2">BW</button>
-            <button class="metal btn boost" t="6">EP</button>
+            <button class="metal btn pulse" t="6">FIRE</button>
         </div>
         <div class="control task metal">
-            <button class="metal btn move" t="3">TL</button>
+            <button class="metal btn move" t="3">left</button>
             <button class="metal btn move" t="1">FW</button>
-            <button class="metal btn move" t="4">TR</button><br>
-            <button class="metal btn powerdown active" t="5">PD</button>
+            <button class="metal btn move" t="4">right</button><br>
+            <button class="metal btn powerdown active" t="5">Power<br>Down</button>
             <button class="metal btn move" t="2">BW</button>
-            <button class="metal btn boost" t="6">EP</button>
+            <button class="metal btn pulse" t="6">FIRE</button>
         </div>
         <div class="control task metal">
-            <button class="metal btn move" t="3">TL</button>
+            <button class="metal btn move" t="3">left</button>
             <button class="metal btn move" t="1">FW</button>
-            <button class="metal btn move" t="4">TR</button><br>
-            <button class="metal btn powerdown active" t="5">PD</button>
+            <button class="metal btn move" t="4">right</button><br>
+            <button class="metal btn powerdown active" t="5">Power<br>Down</button>
             <button class="metal btn move" t="2">BW</button>
-            <button class="metal btn boost" t="6">EP</button>
+            <button class="metal btn pulse" t="6">FIRE</button>
+        </div>
+        <div class="control task metal">
+            <button class="metal btn move" t="3">left</button>
+            <button class="metal btn move" t="1">FW</button>
+            <button class="metal btn move" t="4">right</button><br>
+            <button class="metal btn powerdown active" t="5">Power<br>Down</button>
+            <button class="metal btn move" t="2">BW</button>
+            <button class="metal btn pulse" t="6">FIRE</button>
         </div>
         
         
@@ -63,6 +69,30 @@
         <div class="control metal">
             <button class="metal btn fit audio">Muse</button>
         </div>
+    </div>
+    <div id="title">
+        Oh no! Most of our robots are out of control!<br>
+        They must have been infected by this new bot-virus from the newspapers!<br><br>
+        Please, you must help us save the factory!<br>
+        Use your programming-skills to induce a final <span class="big">POWER DOWN</span> on them!<br><br>
+        Our good old orange TV-Bot&trade; seems to be immune to the virus.<br><br>
+        And his Zap-o-Matic&trade; short range electroshocker should be enough to stop the other bots.<br><br>
+        I've linked your state of the art 5-step controlpanel to the TV-Bot&trade;<br>
+        Use <span class="white">[left]</span> and <span class="white">[right]</span> to turn around and <span class="white">[FW]</span>/<span class="white">[BW]</span> to move.<br>
+        <br>
+        When you are close enough to one of the crazy bots, just <span class="white">[FIRE]</span> the Zap-o-Matic&trade; at your will!<br>
+        Remember: the required 2 points of energy for the ZAP will be taken from your bot, so keep him charged.<br>
+        Also: try to avoid the industrial lasers, they will drain your power too...<br>
+        <br>
+        When you run low on POWER (and cannot move/fire anymore), just charge up using the <span class="white">[Power Down]</span>.<br>
+        <br>
+        To run your programmed 5 steps, just hit <span class="white">[Execute]</span><br>
+        <br>
+        <br>
+        If you are too distracted by our calming music in the factory, stop it with the <span class="white">[Muse]</span> button on your panel.
+        <br>
+        <br>
+        <span class="white">Click to accept the mission...</span>
     </div>
 
     <!-- build:js -->
