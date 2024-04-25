@@ -25,6 +25,7 @@ level.data.forEach((data, row) => {
             case LEVEL_PLAYER:
                 robo1 = game.add(new Robo({x:x, y:y,imagePool:roboImagePool, spriteDef:roboDefinition}));
                 robo1.showPower();
+                robo1.rot = PI/2;
             break;
             case LEVEL_ROBO2:
                 robo2 = game.add(new Robo({x:x, y:y,imagePool:robo2ImagePool, spriteDef:robo2Definition}));
