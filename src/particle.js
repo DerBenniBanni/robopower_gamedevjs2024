@@ -40,8 +40,16 @@ class Particle extends Sprite {
         dp.y *= delta;
         this.p = this.p.addP(dp);
         this.rot +=this.rotSpeed * delta;
-        if(this.ttl <= 0.1 && this.type == PARTICLE_SPARK) {
-            this.renderBg();
+    }
+    onRemove() {
+        if(this.type == PARTICLE_SPARK) {
+            bgCtx.save();
+            bgCtx.translate(this.p.x, this.p.y);
+            bgCtx.rotate(this.rot);
+            fillStyle(bgCtx, '#0002');
+            let size = rand(this.size/2, this.size);
+            fillRect(bgCtx, -size/2, -size/2, size, size);
+            bgCtx.restore();
         }
     }
     renderStartExt(context) {
@@ -53,10 +61,5 @@ class Particle extends Sprite {
         fillStyle(context, color.rgba());
         let size = this.size * animFactor;
         fillRect(context, -size/2, -size/2, size, size);
-    }
-    renderBg() {
-        fillStyle(bgCtx, '#00000002');
-        let size = this.size;
-        fillRect(bgCtx, this.p.x-size/2, this.p.y-size/2, size, size);
     }
 }

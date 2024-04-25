@@ -29,6 +29,8 @@ const paths = {
             'src/imagepool.js',
             'src/musicplayer.js',
             'src/song.js',
+            'src/sound_hit.js',
+            'src/sound_laser.js',
             'src/music.js',
             'src/color.js',
             'src/point.js',

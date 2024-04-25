@@ -2,6 +2,8 @@
 const game = new Game();
 
 loadMusic(song, 'gameAudio', true);
+loadMusic(audioHit, 'hitAudio', false);
+loadMusic(audioLaser, 'laserAudio', false);
 
 const roboImagePool = createStackedSprite(roboDefinition);
 const robo2ImagePool = createStackedSprite(robo2Definition);

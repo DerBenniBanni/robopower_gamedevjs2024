@@ -43,12 +43,14 @@ class Game {
                     belt.addTask(activeTask);
                 });
             } else if(TASK_BOARD_LASERS == activeTask.t) {
+                Music.play(Music.laserAudio);
                 game.get(SPRITETYPE_LASERTOWER).forEach(lt => lt.fire());
             } else {
                 // assign task to its robot
                 activeTask.b.tasks.push(activeTask);
             }
         }
+        this.sprites.filter(s => s.ttl <= 0).forEach(s => s.onRemove());
         this.sprites = this.sprites.filter(s => s.ttl > 0);
         this.sprites.forEach(s=> {
             s.ttl -= delta;

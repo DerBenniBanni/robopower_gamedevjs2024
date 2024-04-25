@@ -26,4 +26,5 @@ class Sprite {
     renderEnd(context) {
         context.restore();
     }
+    onRemove() {}
 }

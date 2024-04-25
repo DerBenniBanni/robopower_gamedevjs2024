@@ -1,22 +1,20 @@
 const Music = {
     gameAudio:null,
-    crashAudio:null,
-    playCrash() {
-        if(this.crashAudio) {
-            this.crashAudio.currentTime = 0;
-            this.crashAudio.play();
+    hitAudio:null,
+    laserAudio:null,
+    
+    play(audio) {
+        audio = audio || this.gameAudio;
+        if(audio) {
+            audio.currentTime = 0;
+            audio.play();
         }
     },
-    play() {
-        if(this.gameAudio) {
-            this.gameAudio.currentTime = 0;
-            this.gameAudio.play();
-        }
-    },
-    stop() {
-        if(this.gameAudio) {
-            this.gameAudio.pause();
-            this.gameAudio.currentTime = 0;
+    stop(audio) {
+        audio = audio || this.gameAudio;
+        if(audio) {
+            audio.pause();
+            audio.currentTime = 0;
         }
     },
 }
