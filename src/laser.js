@@ -1,4 +1,4 @@
-const LASERSPEED = 500;
+const LASERSPEED = 800;
 class Laser extends Sprite {
     constructor({x,y,d, imagePool, spriteDef}) {
         super({x,y});

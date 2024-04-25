@@ -37,8 +37,9 @@ class Task {
         this.timer = 0;
     }
     setTarget() {
-        cleanupPosition(this.b);
-        cleanupRotation(this.b);
+        let robo = this.b;
+        cleanupPosition(robo);
+        cleanupRotation(robo);
         switch(this.t) {
             case TASK_FORWARD:
                 this.setMoveTarget(STEPSIZE);
@@ -57,6 +58,13 @@ class Task {
             break;
             case TASK_ELECTRIC_PULSE:
                 this.timer = ELECTRIC_PULSE_TIME;
+                let move = new P(1,0);
+                move = move.rotate(robo.rot);
+                let targetPoint = move.multi(40).addP(robo.p);
+                let target = game.get(SPRITETYPE_ROBO).find(t=>samePosition(t.p, targetPoint, 10));
+                if(target) {
+                    target.power = 0;
+                }
             break;
         }
     }
@@ -65,10 +73,14 @@ class Task {
         let target = new P(step,0);
         target = target.rotate(robo.rot);
         this.p = robo.p.addP(target);
+        if(this.p.x < STEPSIZE || this.p.x > BASEWIDTH - STEPSIZE || this.p.y < STEPSIZE || this.p.y > BASEHEIGHT - STEPSIZE) {
+            this.f = true;
+            return;
+        }
         let p2 = this.p.addP(target);
         cleanupPosition(this);
         let blocked = game.get([SPRITETYPE_LASERTOWER]).filter(o => samePosition(o.p, this.p, 5));
-        let blockedSecondField = game.get([SPRITETYPE_ROBO, SPRITETYPE_LASERTOWER]).filter(o => samePosition(o.p, this.p, 5));
+        let blockedSecondField = game.get([SPRITETYPE_ROBO, SPRITETYPE_LASERTOWER]).filter(o => samePosition(o.p, p2, 5));
         this.pushed = game.get([SPRITETYPE_ROBO]).filter(o => samePosition(o.p, this.p, 5));
         if(blocked.length > 0 || (this.pushed.length > 0 && blockedSecondField.length > 0)) {
             this.f = true;

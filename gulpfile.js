@@ -45,6 +45,7 @@ const paths = {
             'src/belt.js',
             'src/game.js',
             'src/spritestacker.js',
+            'src/leveldata.js',
             'src/robopower_rungame.js',
         ]
     },

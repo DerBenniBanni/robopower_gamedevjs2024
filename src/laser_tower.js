@@ -9,6 +9,13 @@ class LaserTower extends Sprite {
         this.spriteDef = spriteDef;
         this.sortMod = 41;
     }
+    update() {
+        if(this.rot < 0) {
+            this.rot += 2*PI;
+        } else if(this.rot > 2*PI) {
+            this.rot -= 2*PI;
+        }
+    }
     render(context) {
         let rotDeg = Math.floor(toDeg(this.rot) % 360);
         if(rotDeg < 0) {

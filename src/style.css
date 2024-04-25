@@ -18,7 +18,7 @@ canvas {
 .hidden {
 	visibility:hidden;
 }
-#title {
+.message {
 	position:absolute;
 	left:0;
 	right:0;  
@@ -60,6 +60,12 @@ canvas {
 	border-radius: 8px;
 	border: 3px solid;
 	border-color: #fff5 #0005 #0005 #fff5;
+}
+.task {
+	transition: all 0.5s;
+}
+.task.running {
+	box-shadow:0 -5px 10px 5px #f50;
 }
 .power {
 	background-color:#030;
@@ -137,4 +143,7 @@ canvas {
 		-2px -2px 2px #0003,
 		2px 2px 2px #fff8,
 		inset 2px 2px 3px -1px #000c;
+}
+.execute.active {
+	cursor:not-allowed;
 }

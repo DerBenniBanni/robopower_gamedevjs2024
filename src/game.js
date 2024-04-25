@@ -1,3 +1,16 @@
+const removeRunningTaskMarker = () => {
+    let runningTask = document.querySelector('.task.running');
+    if(runningTask) {
+        runningTask.classList.remove('running');
+    }
+}
+
+const setRunningTaskMarker = (idx) => {
+    removeRunningTaskMarker();
+    let taskDivs = [...document.querySelectorAll('.task')];
+    taskDivs[idx].classList.add('running');
+}
+
 class Game {
     constructor() {
         this.sprites = [];
@@ -37,6 +50,9 @@ class Game {
                 activeTask = null;
             }
         } else if(tasklist.length > 0) {
+            if(tasklist.length % 5 == 0) {
+                setRunningTaskMarker(Math.floor((25-tasklist.length) / 5));
+            }
             activeTask = tasklist.shift();
             if(TASK_BOARD_BELTS == activeTask.t) {
                 game.get(SPRITETYPE_BELT).forEach(belt => {
@@ -48,6 +64,15 @@ class Game {
             } else {
                 // assign task to its robot
                 activeTask.b.tasks.push(activeTask);
+            }
+        } else {
+            document.querySelector('.btn.execute').classList.remove('active');
+            removeRunningTaskMarker();
+            let stillNotWon = game.get(SPRITETYPE_ROBO).filter(r=>!r.isPlayer).some(r=>r.power > 0);
+            if(!stillNotWon) {
+                Music.stop();
+                document.querySelector('#won').classList.remove("hidden");
+                document.querySelector('#program').classList.add("hidden");
             }
         }
         this.sprites.filter(s => s.ttl <= 0).forEach(s => s.onRemove());
